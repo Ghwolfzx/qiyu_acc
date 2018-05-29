@@ -39,12 +39,12 @@ class UserSelectGameServer extends Controller
         if ($res->getStatusCode() == 200 && $result['session'] == $session) {
             $loginaccount = cache('t_log_acclogin' . $uid);
             if ($loginaccount) {
-                DB::table('t_log_acclogin')->where('id', $loginaccount)->update(['sid' => $session, 'g_id' => $serverid, 'gametime' => time()]);
+                DB::table('t_log_acclogin')->where('id', $loginaccount)->update(['sid' => $session, 'g_id' => $serverid, 'gametime' => date('Y-m-d H:i:s', time())]);
                 $result = DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->first();
                 if (empty($result)) {
-                    DB::table('t_accountgame_link')->insert(['a_id' => $uid, 'g_id' => $serverid, 'g_time' => time()]);
+                    DB::table('t_accountgame_link')->insert(['a_id' => $uid, 'g_id' => $serverid, 'g_time' => date('Y-m-d H:i:s', time())]);
                 } else {
-                    DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->update(['g_time' => time()]);
+                    DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->update(['g_time' => date('Y-m-d H:i:s', time())]);
                 }
             } else {
                 return $this->responseResult('false', '登录记录未找到', ['errorcode' => 1]);

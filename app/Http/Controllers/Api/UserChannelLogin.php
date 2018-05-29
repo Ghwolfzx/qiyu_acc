@@ -255,9 +255,9 @@ class UserChannelLogin extends Controller
                     $recommendSid = GameServer::recommend();
 
                     if ($recommendSid && !in_array($recommendSid, $visited)) {
-                        $data['recentlist'][$recommendSid]['id'] = $recommendSid;
+                        $data['recentlist'][]['id'] = $recommendSid;
                     } else if ($serverlist && !in_array($serverlist[0], $visited)) {
-                        $data['recentlist'][$serverlist[0]]['id'] = $serverlist[0];
+                        $data['recentlist'][[0]]['id'] = $serverlist[0];
                     }
 
                     // 服务器列表
