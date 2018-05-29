@@ -261,7 +261,7 @@ class UserChannelLogin extends Controller
                     }
 
                     // 服务器列表
-                    $data['serverlist'] = Cache::remember('visited_serverlist', config('cache.expires'), function () use ($serverData, $bInWhiteList) {
+                    $data['serverlist'] = Cache::remember('visited_serverlist_' . $bInWhiteList, config('cache.expires'), function () use ($serverData, $bInWhiteList) {
                         $serverlist = [];
                         if ($serverData) {
                             foreach ($serverData as $server) {
