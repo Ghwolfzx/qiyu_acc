@@ -29,13 +29,32 @@ class UserSelectGameServer extends Controller
             return DB::table('t_server')->where('gameid', $serverid)->select('ip', 'gmport')->first();
         });
 
-    	$client = new Client([
+        $client = new Client([
             'base_uri' => 'http://' . $serverGm->ip . ':' . $serverGm->gmport,
             'timeout'  => 4.0,
         ]);
-    	$res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
-    	$result = json_decode($res->getBody()->getContents(), true);
-        // dd($result);
+        try {
+            $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
+            $result = json_decode($res->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+
+            $result = false;
+            if (!$result) {
+                return $this->responseResult('false', '选服失败，请联系客服', ['errorcode' => 1]);
+            }
+        }
+
+        if (!isset($result['session'])) {
+            $retry = 1;
+            while (!isset($result['session']) && $retry--) {
+                $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
+                $result = json_decode($res->getBody()->getContents(), true);
+            }
+            if (!isset($result['session'])) {
+                return $this->responseResult('false', '选择区服失败，请联系客服', ['errorcode' => 1]);
+            }
+        }
+
         if ($res->getStatusCode() == 200 && $result['session'] == $session) {
             $loginaccount = cache('t_log_acclogin' . $uid);
             if ($loginaccount) {
