@@ -150,7 +150,7 @@ class UserChannelLogin extends Controller
 
         // 判断公告是否允许进入游戏
     	if (cache('bGameValid') && !$bInWhiteList) {
-    		return Self::responseResult('false', '暂时无法进入游戏', ['errorcode' => 3]);
+    		return Self::responseResult('false', '暂时无法进入游戏', ['errorcode' => 1]);
     	}
 
         // 渠道参数，需优化
@@ -226,7 +226,7 @@ class UserChannelLogin extends Controller
                 }
         	} else {
 
-        		if (!cache('bGameValid')) {
+        		if (!cache('bGameValid') || $bInWhiteList) {
         			$channelRedlist = Self::systemParams('channel_redlist');
 
                     // 最近访问区服
@@ -283,12 +283,12 @@ class UserChannelLogin extends Controller
                         return $serverlist;
                     });
         		} else {
-                    return Self::responseResult('false', '游戏进入失败', ['errorcode' => 1]);
+                    return Self::responseResult('false', '游戏进入失败', ['errorcode' => 3]);
                 }
         	}
             return Self::responseResult('true', '游戏进入成功', $data);
         } else {
-        	return Self::responseResult('false', '渠道验证失败', ['errorcode' => 1]);
+        	return Self::responseResult('false', '渠道验证失败', ['errorcode' => 2]);
         }
     }
 }
