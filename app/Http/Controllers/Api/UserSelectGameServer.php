@@ -48,10 +48,12 @@ class UserSelectGameServer extends Controller
                 }
                 $visited = cache('visited_' . $uid);
                 if ($visited[0] != $serverid) {
-                    $visited = Cache::put('visited_' . $uid, config('cache.expires'), function () use ($uid) {
+                    Cache::forget('visited_' . $uid);
+                    Cache::forget('visited_recentlist_' . $uid);
+                    $visited = Cache::remember('visited_' . $uid, config('cache.expires'), function () use ($uid) {
                             return DB::table('t_accountgame_link')->where('a_id', $uid)->orderBy('g_time', 'desc')->pluck('g_id')->toArray();
                         });
-                    Cache::put('visited_recentlist_' . $uid, config('cache.expires'), function () use ($visited) {
+                    Cache::remember('visited_recentlist_' . $uid, config('cache.expires'), function () use ($visited) {
                         $recentlist = [];
                         foreach ($visited as $vistid) {
                             $recentlist[]['id'] = $vistid;
