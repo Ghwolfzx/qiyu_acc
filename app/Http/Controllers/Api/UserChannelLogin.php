@@ -177,7 +177,7 @@ class UserChannelLogin extends Controller
 
         // 渠道用户校验, 奇遇暂时不校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
-            $result2 = app(ChannelRequest::class)->qiyu($uin, $sessionid, $nickname, $channelname);
+            $result2 = true;#app(ChannelRequest::class)->qiyu($uin, $sessionid, $nickname, $channelname);
 	    }
 
         if ($result2) {
@@ -231,7 +231,7 @@ class UserChannelLogin extends Controller
 
                     // 最近访问区服
                     $visited = [];
-        			if (!in_array($channelname, $channelRedlist)) {
+        			if (!empty($channelRedlist) && is_array($channelRedlist) && !in_array($channelname, $channelRedlist)) {
         				$visited = Cache::remember('visited_' . $user->id, config('cache.expires'), function () use ($user) {
                             return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_id', 'desc')->pluck('g_id')->toArray();
                         });
@@ -266,6 +266,9 @@ class UserChannelLogin extends Controller
                         if ($serverData) {
                             foreach ($serverData as $server) {
                                 if (!$bInWhiteList && $server->status == 'inner') {
+                                    $serverlist[$server->id]['id'] = $server->id;
+                                    $serverlist[$server->id]['status'] = 'offline';
+                                    $serverlist[$server->id]['tag'] = $server->tag;
                                     continue;
                                 }
                                 $serverlist[$server->id]['id'] = $server->id;
