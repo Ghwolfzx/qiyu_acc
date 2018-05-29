@@ -37,11 +37,24 @@ class UserSelectGameServer extends Controller
     	$result = json_decode($res->getBody()->getContents(), true);
         // dd($result);
         if ($res->getStatusCode() == 200 && $result['session'] == $session) {
+            $loginaccount = cache('t_log_acclogin' . $uid);
+            if ($loginaccount) {
+                DB::table('t_log_acclogin')->where('id', $loginaccount)->update(['sid' => $session, 'g_id' => $serverid, 'gametime' => time()]);
+                $result = DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->first();
+                if (empty($result)) {
+                    DB::table('t_accountgame_link')->insert(['a_id' => $uid, 'g_id' => $serverid, 'g_time' => time()]);
+                } else {
+                    DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->update(['g_time' => time()]);
+                }
+            } else {
+                return $this->responseResult('false', '登录记录未找到', ['errorcode' => 1]);
+            }
+
             $serverData = GameServer::serverData();
             $data = ['section' => $serverData[$serverid]->section, 'uuid' => $session];
             return $this->responseResult('true', '选区成功', $data);
         } else {
-            return $this->responseResult('false', '选区失败，请联系客服');
+            return $this->responseResult('false', '选区失败，请联系客服', ['errorcode' => 1]);
         }
     }
 }

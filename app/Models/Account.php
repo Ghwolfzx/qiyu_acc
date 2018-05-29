@@ -28,8 +28,8 @@ class Account extends Model
                 return $user;
         });
         // 登录日志表，需优化
-        DB::table('t_log_acclogin')->insert(['acc_id'=>$user->id, 'd_id' => $device, 'logintime' => date('Y-m-d H:i:s', time())]);
-
+        $logaccount = DB::table('t_log_acclogin')->insertGetId(['acc_id'=>$user->id, 'd_id' => $device, 'logintime' => date('Y-m-d H:i:s', time())]);
+        cache(['t_log_acclogin' . $user->id => $logaccount], config('cache.session_expires'));
         return $user;
     }
 }

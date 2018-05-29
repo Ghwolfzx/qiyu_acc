@@ -86,7 +86,7 @@ class UserChannelLogin extends Controller
                 'visited_' . $user->id,
                 config('cache.expires'),
                 function () use ($user) {
-                    return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_id', 'desc')->pluck('g_id')->toArray();
+                    return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_time', 'desc')->pluck('g_id')->toArray();
             });
 
             // 是否是第一次登录
@@ -100,15 +100,15 @@ class UserChannelLogin extends Controller
                 config('cache.expires'),
                 function () use ($visited) {
                     foreach ($visited as $vistid) {
-                        $recentlist[$vistid]['id'] = $vistid;
+                        $recentlist[]['id'] = $vistid;
                     }
                     return $recentlist;
             });
 
             if ($recommendSid && !in_array($recommendSid, $visited)) {
-                $data['recentlist'][$recommendSid]['id'] = $recommendSid;
+                $data['recentlist'][]['id'] = $recommendSid;
             } else if ($serverlist && !in_array($serverlist[0], $visited)) {
-                $data['recentlist'][$serverlist[0]]['id'] = $serverlist[0];
+                $data['recentlist'][]['id'] = $serverlist[0];
             }
             $data['serverlist'][$server->id]['id'] = $server->id;
             $data['serverlist'][$server->id]['status'] = 'online';
@@ -209,7 +209,7 @@ class UserChannelLogin extends Controller
             $data['session'] = $sessionid;
             $data['first'] = false;
 
-            // 服务器数据，需优化
+            // 服务器数据
             $serverlist = GameServer::serverList();
 
         	// 评审版本固定
@@ -233,7 +233,7 @@ class UserChannelLogin extends Controller
                     $visited = [];
         			if (!empty($channelRedlist) && is_array($channelRedlist) && !in_array($channelname, $channelRedlist)) {
         				$visited = Cache::remember('visited_' . $user->id, config('cache.expires'), function () use ($user) {
-                            return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_id', 'desc')->pluck('g_id')->toArray();
+                            return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_time', 'desc')->pluck('g_id')->toArray();
                         });
         			}
 
@@ -246,7 +246,7 @@ class UserChannelLogin extends Controller
                     $data['recentlist'] = Cache::remember('visited_recentlist_' . $user->id, config('cache.expires'), function () use ($visited) {
                         $recentlist = [];
                         foreach ($visited as $vistid) {
-                            $recentlist[$vistid]['id'] = $vistid;
+                            $recentlist[]['id'] = $vistid;
                         }
                         return $recentlist;
                     });
