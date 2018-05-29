@@ -31,7 +31,7 @@ class UserSelectGameServer extends Controller
 
     	$client = new Client([
             'base_uri' => 'http://' . $serverGm->ip . ':' . $serverGm->gmport,
-            'timeout'  => 2.0,
+            'timeout'  => 4.0,
         ]);
     	$res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
     	$result = json_decode($res->getBody()->getContents(), true);
