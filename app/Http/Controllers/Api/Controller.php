@@ -16,7 +16,7 @@ class Controller extends BaseController
             config('cache.expires'),
             function() use ($channel) {
 				$systemParams = DB::table('t_system_params')->where('key', $channel)->select('value')->first();
-
+				if (empty($systemParams)) return '';
 				return explode(',', $systemParams->value);
 		});
 		return $systemParams;
