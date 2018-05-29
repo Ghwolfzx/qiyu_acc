@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', function () { return 'hellp';});
 Route::group([
 	'namespace' => 'Api',
     'middleware' => ['checkparams', 'web'],

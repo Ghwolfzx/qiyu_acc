@@ -231,7 +231,7 @@ class UserChannelLogin extends Controller
 
                     // 最近访问区服
                     $visited = [];
-        			if (!empty($channelRedlist) && is_array($channelRedlist) && !in_array($channelname, $channelRedlist)) {
+        			if (empty($channelRedlist) || (is_array($channelRedlist) && !in_array($channelname, $channelRedlist))) {
         				$visited = Cache::remember('visited_' . $user->id, config('cache.expires'), function () use ($user) {
                             return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_time', 'desc')->pluck('g_id')->toArray();
                         });
@@ -257,7 +257,7 @@ class UserChannelLogin extends Controller
                     if ($recommendSid && !in_array($recommendSid, $visited)) {
                         $data['recentlist'][]['id'] = $recommendSid;
                     } else if ($serverlist && !in_array($serverlist[0], $visited)) {
-                        $data['recentlist'][[0]]['id'] = $serverlist[0];
+                        $data['recentlist'][]['id'] = $serverlist[0];
                     }
 
                     // 服务器列表
