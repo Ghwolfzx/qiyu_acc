@@ -1,4 +1,5 @@
 <?php
+use Carbon\Carbon;
 
 return [
 
@@ -91,4 +92,8 @@ return [
         str_slug(env('APP_NAME', 'laravel'), '_').'_cache'
     ),
 
+    // 缓存时间
+    'expires' => Carbon::now()->addMinutes(5),
+    // 'expires' => Carbon::now()->addSeconds(1),
+    'session_expires' => Carbon::now()->addMinutes(20),
 ];
