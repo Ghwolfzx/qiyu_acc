@@ -46,6 +46,10 @@ class UserSelectGameServer extends Controller
                 } else {
                     DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->update(['g_time' => date('Y-m-d H:i:s', time())]);
                 }
+                $visited = cache('visited_' . $uid);
+                if ($visited[0] != $serverid) {
+                    $visited = cache(['visited_' . $uid => DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_time', 'desc')->pluck('g_id')->toArray()], config('cache.expires'));
+                }
             } else {
                 return $this->responseResult('false', '登录记录未找到', ['errorcode' => 1]);
             }
