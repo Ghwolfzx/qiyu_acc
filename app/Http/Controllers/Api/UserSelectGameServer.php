@@ -18,11 +18,13 @@ class UserSelectGameServer extends Controller
         $channel = cache('channel_' . $session);
 
         if (empty(cache('user_session_' . $session))) {
-            return $this->responseResult('false', '登录超时', ['errorcode' => 1]);
+            // 登录超时
+            return $this->responseResult('false', '异常 - 0x4213', ['errorcode' => 1]);
         }
 
         if (empty($channel)) {
-            return $this->responseResult('false', '参数错误', ['errorcode' => 1]);
+            // 参数错误
+            return $this->responseResult('false', '异常 - 0x4214', ['errorcode' => 1]);
         }
 
         $serverGm = Cache::remember('t_server_' . $serverid, config('cache.expires'), function () use ($serverid) {

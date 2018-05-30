@@ -4,6 +4,7 @@ namespace App\Models;
 
 use DB;
 use Cache;
+use Redis;
 use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
@@ -23,6 +24,7 @@ class Account extends Model
                     $user = new Self;
                     $user->account = $account;
                     $user->save();
+                    Redis::incr('creat_user');
                     DB::table('t_anysdk_account')->insert(['id'=>$user->id, 'channel' => $channelname, 'user_sdk' => $channelname_fix, 'uid' => $uin]);
                 }
                 return $user;

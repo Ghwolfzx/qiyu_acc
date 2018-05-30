@@ -183,7 +183,7 @@ class UserChannelLogin extends Controller
 
         if ($result2) {
         	if (!$uin) {
-        		return Self::responseResult('false', '账号不存在', ['errorcode' => 4]);
+        		return Self::responseResult('false', '账号不存在', ['errorcode' => 1]);
         	}
 
             // 获取设备id
@@ -291,7 +291,8 @@ class UserChannelLogin extends Controller
         	}
             return Self::responseResult('true', '游戏进入成功', $data);
         } else {
-        	return Self::responseResult('false', '渠道验证失败', ['errorcode' => 2]);
+            // 渠道验证失败 0x2132
+        	return Self::responseResult('false', '重试 - 0x2132', ['errorcode' => 2]);
         }
     }
 }

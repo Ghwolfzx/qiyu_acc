@@ -12,6 +12,7 @@ class RefreshCache extends Controller
 {
     public function refresh(Request $request)
     {
+        \Log::info('server_RefreshCache');
     	Cache::forget('serverList');
     	GameServer::serverList();
 
@@ -46,6 +47,7 @@ class RefreshCache extends Controller
 
     public function notice()
     {
+        \Log::info('notice_RefreshCache');
         Cache::forget('t_system_notice_execute_iddesc');
         Cache::forget('target_notice');
         Cache::forget('target_notice_params');
