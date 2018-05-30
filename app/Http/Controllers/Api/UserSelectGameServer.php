@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use DB;
 use Cache;
+use Redis;
 use GuzzleHttp\Client;
 use App\Models\GameServer;
 use Illuminate\Http\Request;
@@ -105,6 +106,7 @@ class UserSelectGameServer extends Controller
                         return $recentlist;
                     });
                 }
+                Redis::incr('log_count');
             } else {
                 return $this->responseResult('false', '登录记录未找到', ['errorcode' => 1]);
             }
