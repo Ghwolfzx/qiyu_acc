@@ -40,10 +40,10 @@ class GameServer extends Model
                 if ($server->status == 'online' && $server->tag1 == 'hot' && $server->tag2 == 'normal')
                     continue;
                 $server->tag = 'normal';
-                if ($server->tag2 == 'hot') {
-                    $server->tag = 'hot';
-                } else if ($server->tag1 == 'new') {
+                if ($server->tag1 == 'new') {
                     $server->tag = 'new';
+                } else if ($server->tag2 == 'hot') {
+                    $server->tag = 'hot';
                 }
                 $server->section = $server->configsection;
                 unset($server->tag1);
