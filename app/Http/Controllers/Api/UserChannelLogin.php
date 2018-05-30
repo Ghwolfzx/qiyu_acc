@@ -210,6 +210,7 @@ class UserChannelLogin extends Controller
             $data['uid'] = $user->id;
             $data['session'] = $sessionid;
             $data['first'] = false;
+            $data['defaultTag'] = 'hot';
 
             // 服务器数据
             $serverlist = GameServer::serverList();
