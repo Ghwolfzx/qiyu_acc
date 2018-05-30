@@ -198,8 +198,9 @@ class UserChannelLogin extends Controller
         	$account = $uin . '@' . $channelname_fix;
             $user = Account::getUserInfoByAccount($account, $channelname, $channelname_fix, $uin, $device);
 
+            $sessionid = getSession($user->id, $sessionid);
             // session 无法使用，改为 cache 存储
-            cache(['user_session_' . $sessionid => $sessionid.$user->id], config('cache.session_expires'));
+            cache(['user_session_' . $sessionid => $sessionid], config('cache.session_expires'));
             cache(['uid' . $sessionid => $user->id], config('cache.session_expires'));
             cache(['channel_' . $sessionid => $channelname], config('cache.session_expires'));
 

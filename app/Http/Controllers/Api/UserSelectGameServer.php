@@ -17,12 +17,12 @@ class UserSelectGameServer extends Controller
     	$uid = cache('uid' . $session);
         $channel = cache('channel_' . $session);
 
-        if ($session.$uid !== cache('user_session_' . $session)) {
-            return $this->responseResult('false', 'session 错误', ['errorcode' => 3]);
+        if (empty($session))) {
+            return $this->responseResult('false', '登录超时', ['errorcode' => 1]);
         }
 
         if (empty($channel)) {
-            return $this->responseResult('false', 'channel 错误', ['errorcode' => 3]);
+            return $this->responseResult('false', '参数错误', ['errorcode' => 1]);
         }
 
         $serverGm = Cache::remember('t_server_' . $serverid, config('cache.expires'), function () use ($serverid) {
