@@ -49,7 +49,10 @@ class RefreshCache extends Controller
         Cache::forget('t_system_notice_execute_iddesc');
         Cache::forget('target_notice');
         Cache::forget('target_notice_params');
-        Redis::del('ChannelForceUpdate_*');
+        $keys = (Redis::keys('*:ChannelForceUpdate_*'));
+        foreach ($keys as $val) {
+            Redis::del($val);
+        }
 
         return ['success' => 'true'];
     }
