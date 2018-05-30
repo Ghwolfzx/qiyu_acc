@@ -27,7 +27,7 @@ class CheckParams
         if (env('APP_ENV') !== 'local' && $md5 !== $sign) {
             Log::info('status === 签名验证失败');
             Log::info(LARAVEL_START . ' [end time] ===' . microtime(true));
-            return response(['success' => 'false', 'msg' => '签名验证失败', 'result' => []]);
+            return response(['success' => 'false', 'msg' => '签名验证失败', 'result' => ['errorcode' => 2]]);
         }
         $response = $next($request);
 
