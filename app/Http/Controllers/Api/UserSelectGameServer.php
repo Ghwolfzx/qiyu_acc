@@ -33,6 +33,29 @@ class UserSelectGameServer extends Controller
             'base_uri' => 'http://' . $serverGm->ip . ':' . $serverGm->gmport,
             'timeout'  => 4.0,
         ]);
+
+        // 新服人数判断
+        if ($serverid < 9999) {
+            $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
+                return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
+            });
+            if ($newServer->gameid == $serverid) {
+                $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
+                    try {
+                        $online = $client->get('/gm/online');
+                        $onlineRet = json_decode($online->getBody()->getContents(), true);
+                    } catch (\Exception $e) {
+                        $onlineRet = false;
+                    }
+                    return $onlineRet;
+                });
+
+                if (isset($onlineRet['online']) && $onlineRet['online'] >= 1000) {
+                    return $this->responseResult('false', '服务器爆满', ['errorcode' => 3]);
+                }
+            }
+        }
+
         try {
             $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
             $result = json_decode($res->getBody()->getContents(), true);
