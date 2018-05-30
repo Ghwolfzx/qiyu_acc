@@ -29,4 +29,4 @@ Route::group([
 
 });
 // 新增服务器
-Route::namespace('Api')->get('refreshServer', 'RefreshCache@refresh');
+Route::get('refreshServer', 'Api/RefreshCache@refresh');
