@@ -20,7 +20,7 @@ class GameServer extends Model
             $list = Self::select('id', 'status', 'tag1', 'tag2')->orderBy('id', 'desc')->get();
             $values = [];
             foreach ($list as $server) {
-                if ($server->status == 'online' && $server->tag1 == 'hot' && $server->tag2 == 'normal')
+                if ($server->status == 'online' && $server->tag1 == 'new' && $server->tag2 == 'hot')
                     continue;
                 if (in_array($server->status, ['online', 'maintain', 'inner'])) {
                     $values[] = $server->id;
@@ -37,7 +37,7 @@ class GameServer extends Model
             $serverList = Self::select('id', 'status', 'tag1', 'tag2', 'configsection')->orderBy('id', 'desc')->get();
             $serverData = [];
             foreach ($serverList as $server) {
-                if ($server->status == 'online' && $server->tag1 == 'hot' && $server->tag2 == 'normal')
+                if ($server->status == 'online' && $server->tag1 == 'new' && $server->tag2 == 'hot')
                     continue;
                 $server->tag = 'normal';
                 if ($server->tag1 == 'new') {
