@@ -37,7 +37,7 @@ class GameServer extends Model
             $serverList = Self::select('id', 'status', 'tag1', 'tag2', 'configsection')->orderBy('id', 'desc')->get();
             $serverData = [];
             foreach ($serverList as $server) {
-                if ($server->status == 'online' && $server->tag1 == 'new' && $server->tag2 == 'normal')
+                if ($server->status == 'online' && $server->tag1 == 'hot' && $server->tag2 == 'normal')
                     continue;
                 $server->tag = 'normal';
                 if ($server->tag2 == 'hot') {
