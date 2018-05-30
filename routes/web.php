@@ -27,6 +27,6 @@ Route::group([
 	// 服务器选择
 	Route::get('userSelectGameServer', 'UserSelectGameServer@index');
 
-	// 新增服务器
-	Route::get('refreshServer', 'RefreshCache@refresh');
 });
+// 新增服务器
+Route::namespace('Api')->get('refreshServer', 'RefreshCache@refresh');
