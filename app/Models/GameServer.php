@@ -55,6 +55,20 @@ class GameServer extends Model
         });
     }
 
+    public static function serverAllData()
+    {
+        return Cache::remember('serverAllData', config('cache.expires'), function () {
+            $serverList = Self::select('id', 'configsection')->orderBy('id', 'desc')->get();
+            $serverData = [];
+            foreach ($serverList as $server) {
+                $server->section = $server->configsection;
+                unset($server->configsection);
+                $serverData[$server->id] = $server;
+            }
+            return $serverData;
+        });
+    }
+
     public static function recommend()
     {
         return Cache::remember('recommendSid', config('cache.expires'), function () {

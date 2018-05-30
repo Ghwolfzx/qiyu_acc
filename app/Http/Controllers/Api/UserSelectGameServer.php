@@ -107,7 +107,7 @@ class UserSelectGameServer extends Controller
                 return $this->responseResult('false', '登录记录未找到', ['errorcode' => 1]);
             }
 
-            $serverData = GameServer::serverData();
+            $serverData = GameServer::serverAllData();
             $data = ['section' => $serverData[$serverid]->section, 'uuid' => $session];
             return $this->responseResult('true', '选区成功', $data);
         } else {
