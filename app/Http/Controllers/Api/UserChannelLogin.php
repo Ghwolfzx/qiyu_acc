@@ -177,7 +177,7 @@ class UserChannelLogin extends Controller
 
         // 渠道用户校验, 奇遇暂时不校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
-            $result2 = true;#app(ChannelRequest::class)->qiyu($uin, $sessionid, $nickname, $channelname);
+            $result2 = app(ChannelRequest::class)->qiyu($uin, $sessionid, $nickname, $channelname);
 	    }
 
         if ($result2) {

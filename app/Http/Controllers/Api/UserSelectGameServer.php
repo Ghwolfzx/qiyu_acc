@@ -66,7 +66,7 @@ class UserSelectGameServer extends Controller
                     DB::table('t_accountgame_link')->where(['a_id' => $uid, 'g_id' => $serverid])->update(['g_time' => date('Y-m-d H:i:s', time())]);
                 }
                 $visited = cache('visited_' . $uid);
-                if ($visited[0] != $serverid) {
+                if (empty($visited) || $visited[0] != $serverid) {
                     Cache::forget('visited_' . $uid);
                     Cache::forget('visited_recentlist_' . $uid);
                     $visited = Cache::remember('visited_' . $uid, config('cache.expires'), function () use ($uid) {
