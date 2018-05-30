@@ -17,7 +17,7 @@ class UserSelectGameServer extends Controller
     	$uid = cache('uid' . $session);
         $channel = cache('channel_' . $session);
 
-        if (empty(session('user_session_' . $session))) {
+        if (empty(cache('user_session_' . $session))) {
             return $this->responseResult('false', '登录超时', ['errorcode' => 1]);
         }
 
