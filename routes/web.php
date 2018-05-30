@@ -30,3 +30,4 @@ Route::group([
 });
 // 新增服务器
 Route::get('refreshServer', 'Api\RefreshCache@refresh');
+Route::get('refreshNotice', 'Api\RefreshCache@notice');

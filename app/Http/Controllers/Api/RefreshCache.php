@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use DB;
 use Cache;
+use Redis;
 use App\Models\GameServer;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,16 @@ class RefreshCache extends Controller
 	        });
 
     	}
+
+        return ['success' => 'true'];
+    }
+
+    public function notice()
+    {
+        Cache::forget('t_system_notice_execute_iddesc');
+        Cache::forget('target_notice');
+        Cache::forget('target_notice_params');
+        Redis::del('ChannelForceUpdate_*');
 
         return ['success' => 'true'];
     }
