@@ -70,7 +70,8 @@ class UserChannelLogin extends Controller
             $data['user'] = $user->account ?? '';
             $data['uid'] = $user->id;
             $data['session'] = md5($user->id.time());
-            DB::table('t_log_acclogin')->insert(['acc_id'=>$user->id, 'd_id' => $device->id, 'logintime' => date('Y-m-d H:i:s', time())]);
+            $logaccount = DB::table('t_log_acclogin')->insertGetId(['acc_id'=>$user->id, 'd_id' => $device->id, 'logintime' => date('Y-m-d H:i:s', time())]);
+            cache(['t_log_acclogin' . $user->id => $logaccount], config('cache.session_expires'));
         }
 
         cache(['user_session_' . $data['session'] => $data['session'].$user->id], config('cache.session_expires'));
