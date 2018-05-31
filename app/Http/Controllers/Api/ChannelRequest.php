@@ -33,14 +33,55 @@ class ChannelRequest extends Controller
         $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
 
         $url = $qiyu['LoginURL'] . $bodys;
-        $response = $client->get($url);
+        try {
+            $response = $client->get($url);
 
-        if ($response->getStatusCode() == 200) {
-        	$data = $response->getBody()->getContents();
-        	if ($data == 'success') {
-        		return true;
-        	}
+            if ($response->getStatusCode() == 200) {
+            	$data = $response->getBody()->getContents();
+            	if ($data == 'success') {
+            		return true;
+            	}
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
         }
-        return false;
+    }
+
+    // 旌旗
+    public function kingcheer($uin, $sessionid, $nickname, $channeltag)
+    {
+        $kingcheer = config('ChannelParam.kingcheer');
+
+        $appId = $kingcheer['params'][$channeltag]['appid'];
+        $appKey = $kingcheer['params'][$channeltag]['appkey'];
+        $kingcheer_uid = $uin;
+        $token = $sessionid;
+
+        $tmp = "appId" . $appId . "token" . $token . "uid" . $kingcheer_uid . $appKey;
+        $sign = md5($tmp);
+
+        $client = new Client([
+            'headers' => [
+                'Content-type' => 'application/json',
+                'charset'      => 'utf-8',
+            ],
+            'timeout'  => 10.0,
+        ]);
+        $bodys = json_encode(['appId' => $appId, 'uid' => $kingcheer_uid, 'token' => $token, 'sign' => $sign]);
+        $url = $kingcheer['LoginURL'];
+        try {
+            $response = $client->request('POST', $url, ['body' => $bodys]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data["head"]["responseCode"] == '00000' && $data["head"]["responseMsg"] == 'success') {
+                    return true;
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }

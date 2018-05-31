@@ -155,7 +155,7 @@ class UserChannelLogin extends Controller
     	}
 
         // 渠道参数，需优化
-    	$loginChannelHandle = config('ChannelParam.qiyu.params');
+    	$loginChannelHandle = config('ChannelParam.kingcheer.params');
 
     	$uin = $request->uin; #相当于account
 	    $sessionid = $request->sessionid;
@@ -176,9 +176,9 @@ class UserChannelLogin extends Controller
 
 	    $result2 = false;
 
-        // 渠道用户校验, 奇遇暂时不校验
+        // 渠道用户校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
-            $result2 = app(ChannelRequest::class)->qiyu($uin, $sessionid, $nickname, $channelname);
+            $result2 = app(ChannelRequest::class)->kingcheer($uin, $sessionid, $nickname, $channelname);
 	    }
 
         if ($result2) {
@@ -192,7 +192,7 @@ class UserChannelLogin extends Controller
             // 渠道标识后缀
         	$channelname_fix = $channelname;
         	if (array_key_exists($channelname, $loginChannelHandle)) {
-        		$channelname_fix = 'qiyu';
+        		$channelname_fix = 'kingcheer';
         	}
 
             // 账号查询
