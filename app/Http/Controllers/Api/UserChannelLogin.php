@@ -219,11 +219,12 @@ class UserChannelLogin extends Controller
         	if ($bReviewUser) {
                 $reviewServerId = ($os == 'ios' ? Self::$reviewServerIdIos : Self::$reviewServerId);
                 $data['recentlist'][$reviewServerId]['id'] = $reviewServerId;
-                foreach ($serverlist as $server) {
-                    if ($server == $reviewServerId) {
+                $serverData = GameServer::serverData();
+                foreach ($serverData as $server) {
+                    if ($server->id == $reviewServerId) {
                         continue;
                     }
-                    $data['serverlist'][$server]['id'] = $server;
+                    $data['serverlist'][$server]['id'] = $server->id;
                     $data['serverlist'][$server]['status'] = 'offline';
                     $data['serverlist'][$server]['tag'] = 'new';
                 }
