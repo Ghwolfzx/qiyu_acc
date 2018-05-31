@@ -219,7 +219,7 @@ class UserChannelLogin extends Controller
         	if ($bReviewUser) {
                 $reviewServerId = ($os == 'ios' ? Self::$reviewServerIdIos : Self::$reviewServerId);
                 $data['recentlist'][$reviewServerId]['id'] = $reviewServerId;
-                $serverData = Self::select('id')->get();
+                $serverData = DB::table('t_gameserver')->select('id')->get();
                 foreach ($serverData as $server) {
                     if ($server->id == $reviewServerId) {
                         continue;
