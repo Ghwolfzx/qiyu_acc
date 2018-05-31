@@ -224,9 +224,9 @@ class UserChannelLogin extends Controller
                     if ($server->id == $reviewServerId) {
                         continue;
                     }
-                    $data['serverlist'][$server]['id'] = $server->id;
-                    $data['serverlist'][$server]['status'] = 'offline';
-                    $data['serverlist'][$server]['tag'] = 'new';
+                    $data['serverlist'][$server->id]['id'] = $server->id;
+                    $data['serverlist'][$server->id]['status'] = 'offline';
+                    $data['serverlist'][$server->id]['tag'] = 'new';
                 }
         	} else {
 
