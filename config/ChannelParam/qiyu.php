@@ -43,10 +43,15 @@ return [
                 "appkey" => "5a4e66da0e8086227bf49facede4ccba",
                 "paykey" => "1aa8eab5409c46ce4c31f244fc44366f",
         ],
+        "qiyuiosDDXYJ" => [
+                "appid" => "100303",
+                "appkey" => "93c777a8c364d30dea6a0037d1392383",
+                "paykey" => "af5284cfad9911c1551b6866c9df0d1f",
+        ],
         "qiyuGMDCC" => [
-            "appid" => "100304",
-            "appkey" => "0b0e012eef32d420e1ce088ac9106b71",
-            "paykey" => "512c46bc6e59e7987f5a7b9e04b6fdb7",
+                "appid" => "100304",
+                "appkey" => "0b0e012eef32d420e1ce088ac9106b71",
+                "paykey" => "512c46bc6e59e7987f5a7b9e04b6fdb7",
         ],
     ],
 
