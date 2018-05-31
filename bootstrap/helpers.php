@@ -9,9 +9,7 @@ function encrypt_md5($param="", $key='')
         ksort($param);
         $arg = '';
         foreach ($param as $key => $value) {
-            if ($value != "") {
-                $arg .= "{$key}={$value}&";
-            }
+            $arg .= "{$key}={$value}&";
         }
         $md5Str = rtrim($arg, '&');
     }
