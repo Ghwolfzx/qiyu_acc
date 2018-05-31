@@ -23,6 +23,11 @@ return [
                 "appkey" => "e226ea9c32cb9a51744866f55f363430",
                 "paykey" => "6c3c82864206cad56d2f525a2fd47035",
         ],
+        "qiyuiosJZSGWS" => [
+                "appid" => "100284",
+                "appkey" => "e226ea9c32cb9a51744866f55f363430",
+                "paykey" => "6c3c82864206cad56d2f525a2fd47035",
+        ],
         "qiyuiosXYGX" => [
                 "appid" => "100285",
                 "appkey" => "dd7462c995aaffd0039907b7d5b0d116",
