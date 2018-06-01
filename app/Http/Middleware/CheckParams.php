@@ -25,7 +25,7 @@ class CheckParams
         $md5 = encrypt_md5($params);
 
         if (env('APP_ENV') !== 'local' && $md5 !== $sign) {
-            Log::info('status === 签名验证失败');
+            Log::info(LARAVEL_START . 'status === 签名验证失败');
             Log::info(LARAVEL_START . ' [end time] ===' . microtime(true));
             return response(['success' => 'false', 'msg' => '登录超时，请稍等。。。', 'result' => ['errorcode' => 2]]);
         }

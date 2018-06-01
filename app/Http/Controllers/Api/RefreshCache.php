@@ -52,6 +52,7 @@ class RefreshCache extends Controller
         Cache::forget('target_notice');
         Cache::forget('target_notice_params');
         Cache::forget('bGameValid');
+        Cache::forget('review_version_lst');
         $keys = (Redis::keys('*:ChannelForceUpdate_*'));
         foreach ($keys as $val) {
             Redis::del($val);
