@@ -42,7 +42,7 @@ class UserSelectGameServer extends Controller
             $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
                 return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
             });
-            if ($newServer->gameid == $serverid) {
+            if (isset($newServer->gameid) && $newServer->gameid == $serverid) {
                 $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
                     try {
                         $online = $client->get('/gm/online');
