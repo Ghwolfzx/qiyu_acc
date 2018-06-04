@@ -51,11 +51,23 @@ class ChannelRequest extends Controller
             'headers' => [
                 'Content-type' => 'application/json',
                 'charset'      => 'utf-8',
-                'Connection'   => 'close',
             ]
         ]);
-        $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
 
         $url = $qiyu['LoginURL'] . $bodys;
+        $response = $client->post($url);
+        try {
+            $response = $client->request('POST', $url, ['body' => $bodys]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data["status"] == 1) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
