@@ -58,6 +58,11 @@ return [
                 "appkey" => "0b0e012eef32d420e1ce088ac9106b71",
                 "paykey" => "512c46bc6e59e7987f5a7b9e04b6fdb7",
         ],
+        "qiyuCZYLY" => [
+                "appid" => "100315",
+                "appkey" => "cf91c5c90959d617a8c88b69c4366370",
+                "paykey" => "d61f883df000f30b2fe522399994b18a",
+        ],
     ],
 
     'ip_set' => ['106.14.250.138'],
