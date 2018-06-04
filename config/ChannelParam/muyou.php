@@ -24,7 +24,7 @@ return [
             "secretkey" => "HRsODAkMDQcRGA4AGwAbDxsK",
         ],
     ],
-    $appid_muyou        => "1A27E3E04FF3C466B",
-    $gamekey_muyou      => "swfewewefjiowef",
-    $secretkey_muyou    => "ChsYGh0CCQoXAg4D",
+    'appid_muyou'        => "1A27E3E04FF3C466B",
+    'gamekey_muyou'      => "swfewewefjiowef",
+    'secretkey_muyou'    => "ChsYGh0CCQoXAg4D",
 ];

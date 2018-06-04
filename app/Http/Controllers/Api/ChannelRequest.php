@@ -46,7 +46,8 @@ class ChannelRequest extends Controller
 
     public function muyou($uin, $sessionid, $nickname, $channeltag)
     {
-        $bodys = json_encode(['user_id' => $uin, 'token' => $sessionid])
+        $muyou = config('ChannelParam.muyou');
+        $bodys = json_encode(['user_id' => $uin, 'token' => $sessionid]);
         $client = new Client([
             'headers' => [
                 'Content-type' => 'application/json',
@@ -54,15 +55,14 @@ class ChannelRequest extends Controller
             ]
         ]);
 
-        $url = $qiyu['LoginURL'] . $bodys;
-        $response = $client->post($url);
+        $url = $muyou['LoginURL'];
         try {
             $response = $client->request('POST', $url, ['body' => $bodys]);
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 if ($data["status"] == 1) {
-                    return true;
+                    return [true, $data["user_id"], $data["user_account"]];
                 }
             }
             return false;
