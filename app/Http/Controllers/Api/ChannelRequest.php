@@ -43,4 +43,9 @@ class ChannelRequest extends Controller
         }
         return false;
     }
+
+    public function muyou($uin, $sessionid, $nickname, $channeltag)
+    {
+
+    }
 }
