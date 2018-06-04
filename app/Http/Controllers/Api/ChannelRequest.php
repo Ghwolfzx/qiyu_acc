@@ -46,6 +46,16 @@ class ChannelRequest extends Controller
 
     public function muyou($uin, $sessionid, $nickname, $channeltag)
     {
+        $bodys = json_encode(['user_id' => $uin, 'token' => $sessionid])
+        $client = new Client([
+            'headers' => [
+                'Content-type' => 'application/json',
+                'charset'      => 'utf-8',
+                'Connection'   => 'close',
+            ]
+        ]);
+        $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
 
+        $url = $qiyu['LoginURL'] . $bodys;
     }
 }
