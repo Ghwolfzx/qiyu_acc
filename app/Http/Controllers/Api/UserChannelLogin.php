@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class UserChannelLogin extends Controller
 {
 
-    public static $reviewServerId = 99999999;
+    public static $reviewServerId = 999999;
     public static $reviewServerIdIos = 1000000;
 
     public static $loginChannelHandle = [];
