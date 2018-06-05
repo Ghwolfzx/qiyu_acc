@@ -22,11 +22,19 @@ class UserChannelLogin extends Controller
     {
         Self::$loginChannelHandle = Cache::remember('loginChannelHandle', config('cache.expires'), function() {
             $channelParams = array_map(function ($val) {
-                return $val['params'];
+                return $val['params'] ?? '';
             }, config('ChannelParam'));
 
             $loginChannelHandle = [];
             foreach ($channelParams as $channel => $channelTags) {
+                if (empty($channelTags)) {
+                    if ($channel == '360') {
+                        $loginChannelHandle[$channel] = '_' . $channel;
+                    } else {
+                        $loginChannelHandle[$channel] = $channel;
+                    }
+                    continue;
+                }
                 $channelKeys = array_keys($channelTags);
                 foreach ($channelKeys as $channelTag) {
                     $loginChannelHandle[$channelTag] = $channel;
@@ -47,7 +55,7 @@ class UserChannelLogin extends Controller
      */
     public function login(Request $request)
     {
-        dd(Self::$loginChannelHandle);
+        // dd(Self::$loginChannelHandle);
     	// 白名单
         $bInWhiteList = checkWhite();
 
@@ -82,7 +90,6 @@ class UserChannelLogin extends Controller
         // 渠道用户校验, 奇遇暂时不校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
             $checkChannel = $loginChannelHandle[$channelname];
-            dd($checkChannel);
             $result2 = app(ChannelRequest::class)->$checkChannel($uin, $sessionid, $nickname, $channelname);
             if (is_array($result2)) {
                 $uin = $result2[1];
@@ -90,6 +97,7 @@ class UserChannelLogin extends Controller
                 $result2 = $result2[0];
             }
 	    }
+        dd($result2);
 
         if ($result2) {
         	if (!$uin) {
@@ -102,7 +110,7 @@ class UserChannelLogin extends Controller
             // 渠道标识后缀
         	$channelname_fix = $channelname;
         	if (array_key_exists($channelname, $loginChannelHandle)) {
-        		$channelname_fix = 'qiyu';
+        		$channelname_fix = $loginChannelHandle[$channelname];
         	}
 
             // 账号查询

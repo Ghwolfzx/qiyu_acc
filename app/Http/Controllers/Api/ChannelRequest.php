@@ -70,4 +70,71 @@ class ChannelRequest extends Controller
             return false;
         }
     }
+
+    public function uc($uin, $sessionid, $nickname, $channeltag)
+    {
+        $uc = config('ChannelParam.uc');
+        $tmp = "sid=" . $sessionid . $uc['AppKey'];
+
+        $sign = md5($tmp);
+        $params = [
+            'id' => (int)(LARAVEL_START * 1000000),
+            'service' => 'account.verifySession',
+            'data' => ['sid' => $sessionid],
+            'game' => ['gameId' => $uc['AppId']],
+            'sign' => $sign,
+        ];
+        $bodys = json_encode($params);
+
+        $client = new Client([
+            'headers' => [
+                'Content-type' => 'application/json',
+                'charset'      => 'utf-8',
+            ]
+        ]);
+        $url = $uc['URLUC'];
+        try {
+            $response = $client->request('POST', $url, ['body' => $bodys]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data["state"]['code'] == 1) {
+                    return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickname']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function _360($uin, $sessionid, $nickname, $channeltag)
+    {
+        $_360 = config('ChannelParam.360');
+        $client = new Client([
+            'headers' => [
+                'Content-type' => 'application/json',
+                'charset'      => 'utf-8',
+            ]
+        ]);
+        $url = sprintf($_360['URL360'], $sessionid);
+        try {
+            $response = $client->request('GET', $url);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                return [true, $data["id"], $data["name"]];
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function oppo($uin, $sessionid, $nickname, $channeltag)
+    {
+        $oppo = config('ChannelParam.oppo');
+
+        $oppoTime = (int)(LARAVEL_START * 1000000);
+    }
 }
