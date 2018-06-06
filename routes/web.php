@@ -15,7 +15,7 @@ Route::group([
 	'namespace' => 'Check',
 ], function() {
 	// 验证包名
-	Route::get('checkPackage', 'CheckController@check');
+	Route::post('checkPackage', 'CheckController@check');
 
 });
 // Route::group([
