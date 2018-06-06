@@ -17,9 +17,9 @@ class CheckController extends Controller
     	$deviceid 	= $request->deviceid;
     	$version 	= $request->version;
     	\Log::info('check_params ==== ' . json_encode($request->all()));
-    	if ($package && $deviceid && $version) {
-			DB::table('zyj_valid')->insert(['channel' => $channel,'package' => $package, 'deviceid' => $deviceid, 'version' => $version]);
-    	}
+    	// if ($package && $deviceid && $version) {
+			DB::table('zyj_valid')->insert(['channel' => $channel, 'packagesign' => $packagesign, 'package' => $package, 'appname' => $appname, 'deviceid' => $deviceid, 'version' => $version]);
+    	// }
 
     	return Self::responseResult('true', 'success');
     }
