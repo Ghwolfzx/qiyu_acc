@@ -30,6 +30,8 @@ class UserChannelLogin extends Controller
                 if (empty($channelTags)) {
                     if ($channel == '360') {
                         $loginChannelHandle[$channel] = '_' . $channel;
+                    } else if ($channel == 'huawein') {
+                        $loginChannelHandle[$channel] = 'huawei';
                     } else {
                         $loginChannelHandle[$channel] = $channel;
                     }
