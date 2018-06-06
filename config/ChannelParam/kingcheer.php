@@ -20,5 +20,11 @@ return [
             "appkey" => "27c0bd39a4dc45869bd90ee0be0fc300",
             "paykey" => "753729061569412da6f93d14fac539bf",
         ],
+        // ios
+        "jingqiIosCASG" => [
+            "appid" => "20245",
+            "appkey" => "ddf59bcf1205458ab959e1427f8f9f42",
+            "paykey" => "6aa04c7175da4d7bad83ee20f37f40bc",
+        ],
     ],
 ];
