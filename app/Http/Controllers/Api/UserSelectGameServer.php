@@ -51,7 +51,7 @@ class UserSelectGameServer extends Controller
                     if ($serverid < $minVistid) {
                         return $this->responseResult('false', '服务器爆满。', ['errorcode' => 5]);
                     }
-                } else if ($serverid < $newServer) {
+                } else if ($serverid < $newServer->gameid) {
                     return $this->responseResult('false', '服务器爆满。。', ['errorcode' => 5]);
                 }
             }
