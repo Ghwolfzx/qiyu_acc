@@ -43,7 +43,7 @@ class UserSelectGameServer extends Controller
                 return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
             });
             $bInWhiteList = checkWhite();
-            if ($bInWhiteList) {
+            // if ($bInWhiteList) {
                 // 防止玩家登陆老服
                 $vistidList = cache('visited_' . $uid);
                 if (!empty($vistidList)) {
@@ -54,7 +54,7 @@ class UserSelectGameServer extends Controller
                 } else if ($serverid < $newServer->gameid) {
                     return $this->responseResult('false', '服务器爆满。。', ['errorcode' => 5]);
                 }
-            }
+            // }
             if (isset($newServer->gameid) && $newServer->gameid == $serverid) {
                 $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
                     try {
