@@ -42,19 +42,19 @@ class UserSelectGameServer extends Controller
             $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
                 return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
             });
-            // $bInWhiteList = checkWhite();
-            // if ($bInWhiteList) {
+            $bInWhiteList = checkWhite();
+            if ($bInWhiteList) {
                 // 防止玩家登陆老服
                 $vistidList = cache('visited_' . $uid);
+                $serverList = [$newServer->gameid];
                 if (!empty($vistidList)) {
-                    $minVistid = min($vistidList);
-                    if ($serverid < $minVistid) {
-                        return $this->responseResult('false', '服务器爆满。', ['errorcode' => 5]);
-                    }
-                } else if ($serverid < $newServer->gameid) {
-                    return $this->responseResult('false', '服务器爆满。。', ['errorcode' => 5]);
+                    $serverList = array_merge($serverList, $vistidList);
                 }
-            // }
+
+                if (!in_array($serverid, $serverList)) {
+                    return $this->responseResult('false', '服务器爆满.', ['errorcode' => 5]);
+                }
+            }
 
             if (isset($newServer->gameid) && $newServer->gameid == $serverid) {
                 $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
