@@ -26,5 +26,17 @@ return [
             "appkey" => "ddf59bcf1205458ab959e1427f8f9f42",
             "paykey" => "6aa04c7175da4d7bad83ee20f37f40bc",
         ],
+        // 魔王下凡
+        "jingqiAMWXF" => [
+            "appid" => "20248",
+            "appkey" => "05db9599ef434ed08d1e725b87f16e83",
+            "paykey" => "59b9c88a5cd64fc380b0f19f301fd204",
+        ],
+        // ios
+        "jingqiIosAMWXF" => [
+            "appid" => "20252",
+            "appkey" => "8428499149e74e97a39b4c7d497f3e2b",
+            "paykey" => "a7c2d4a42e56406a8d732bd1ed714b96",
+        ],
     ],
 ];
