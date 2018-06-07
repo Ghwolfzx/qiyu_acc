@@ -49,9 +49,9 @@ return [
                 "paykey" => "1aa8eab5409c46ce4c31f244fc44366f",
         ],
         "qiyuiosDDXYJ" => [
-                "appid" => "100303",
-                "appkey" => "93c777a8c364d30dea6a0037d1392383",
-                "paykey" => "af5284cfad9911c1551b6866c9df0d1f",
+                "appid" => "100325",
+                "appkey" => "81d66519147ebdbb4f9db6e33b183953",
+                "paykey" => "0c1724d00ff9cb79d37a94f69516c768",
         ],
         "qiyuGMDCC" => [
                 "appid" => "100304",
