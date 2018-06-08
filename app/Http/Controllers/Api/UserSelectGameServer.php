@@ -46,7 +46,7 @@ class UserSelectGameServer extends Controller
             // if ($bInWhiteList) {
                 // 防止玩家登陆老服
                 $vistidList = cache('visited_' . $uid);
-                $serverList = [$newServer->gameid];
+                $serverList = [$newServer->gameid, 999999, 1000000];
                 if (!empty($vistidList)) {
                     $serverList = array_merge($serverList, $vistidList);
                 }
