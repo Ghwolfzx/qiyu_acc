@@ -99,7 +99,6 @@ class UserChannelLogin extends Controller
                 $result2 = $result2[0];
             }
 	    }
-        dd($result2);
 
         if ($result2) {
         	if (!$uin) {
