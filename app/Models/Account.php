@@ -34,4 +34,9 @@ class Account extends Model
         cache(['t_log_acclogin' . $user->id => $logaccount], config('cache.session_expires'));
         return $user;
     }
+
+    public function handleUserLoginLog()
+    {
+
+    }
 }
