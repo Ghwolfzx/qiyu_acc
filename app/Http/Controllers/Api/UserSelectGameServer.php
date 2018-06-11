@@ -75,22 +75,24 @@ class UserSelectGameServer extends Controller
 
                 $verifiedData->total_time = $verifiedData->total_time + (time() - strtotime($verifiedData->latestlogin));
 
-                $oldServerGm = Cache::remember('t_server_' . $old_gid, config('cache.expires'), function () use ($old_gid) {
-                    return DB::table('t_server')->where('gameid', $old_gid)->select('ip', 'gmport')->first();
-                });
+                if ($old_gid) {
+                    $oldServerGm = Cache::remember('t_server_' . $old_gid, config('cache.expires'), function () use ($old_gid) {
+                        return DB::table('t_server')->where('gameid', $old_gid)->select('ip', 'gmport')->first();
+                    });
 
-                $oldClient = new Client([
-                    'base_uri' => 'http://' . $oldServerGm->ip . ':' . $oldServerGm->gmport,
-                    'timeout'  => 4.0,
-                ]);
-                try {
-                    $res = $oldClient->get('/accverifiedlogin/verifiedlogin?uid=' . $uid . '&sta=1');
-                    $result = json_decode($res->getBody()->getContents(), true);
-                } catch (\Exception $e) {
+                    $oldClient = new Client([
+                        'base_uri' => 'http://' . $oldServerGm->ip . ':' . $oldServerGm->gmport,
+                        'timeout'  => 4.0,
+                    ]);
+                    try {
+                        $res = $oldClient->get('/accverifiedlogin/verifiedlogin?uid=' . $uid . '&sta=1');
+                        $result = json_decode($res->getBody()->getContents(), true);
+                    } catch (\Exception $e) {
 
-                    $result = false;
-                    if (!$result) {
-                        return $this->responseResult('false', '选服失败了，请联系客服', ['errorcode' => 1]);
+                        $result = false;
+                        if (!$result) {
+                            return $this->responseResult('false', '选服失败了，请联系客服', ['errorcode' => 1]);
+                        }
                     }
                 }
             } else {
