@@ -11,4 +11,5 @@ class Verified extends Model
     public $timestamps = false;
 
     protected $primaryKey = 'uid';
+    protected $fillable = ['uid', 'sta', 'stareward', 'total_time', 'latestlogin', 'latestoffline', 'connum'];
 }
