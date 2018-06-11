@@ -38,5 +38,15 @@ return [
             "appkey" => "8428499149e74e97a39b4c7d497f3e2b",
             "paykey" => "a7c2d4a42e56406a8d732bd1ed714b96",
         ],
+        "jingqiIosMWJL" => [
+            "appid" => "20256",
+            "appkey" => "ab7a08de221946369a5ee5b6cd87aa8b",
+            "paykey" => "75de7e52b4684ed3ba45bb8547430bb5",
+        ],
+        "jingqiIosDYZ" => [
+            "appid" => "20241",
+            "appkey" => "bcb3e558b12a45cb8a29f0fec89c7dcd",
+            "paykey" => "a86617c1c7d94f5a90d200246bf569bb",
+        ],
     ],
 ];
