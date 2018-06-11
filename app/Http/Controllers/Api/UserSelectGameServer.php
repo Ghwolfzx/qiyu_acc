@@ -38,7 +38,7 @@ class UserSelectGameServer extends Controller
             'timeout'  => 4.0,
         ]);
 
-        新服人数判断
+        // 新服人数判断
         if ($serverid < 9999) {
             $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
                 return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
