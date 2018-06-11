@@ -7,6 +7,7 @@ use Cache;
 use Redis;
 use GuzzleHttp\Client;
 use App\Models\GameServer;
+use App\Models\Verified;
 use Illuminate\Http\Request;
 
 class UserSelectGameServer extends Controller
@@ -15,49 +16,53 @@ class UserSelectGameServer extends Controller
     {
     	$serverid = $request->sid;# 区服id
     	$session = $request->session;# 登录session
-    	$uid = cache('uid' . $session);
+    	$uid = 1;#cache('uid' . $session);
         $channel = cache('channel_' . $session);
 
-        if (empty(cache('user_session_' . $session))) {
-            // 登录超时
-            return $this->responseResult('false', '异常 - 0x4213', ['errorcode' => 1]);
-        }
+        // if (empty(cache('user_session_' . $session))) {
+        //     // 登录超时
+        //     return $this->responseResult('false', '异常 - 0x4213', ['errorcode' => 1]);
+        // }
 
-        if (empty($channel)) {
-            // 参数错误
-            return $this->responseResult('false', '异常 - 0x4214', ['errorcode' => 1]);
-        }
+        // if (empty($channel)) {
+        //     // 参数错误
+        //     return $this->responseResult('false', '异常 - 0x4214', ['errorcode' => 1]);
+        // }
 
-        $serverGm = Cache::remember('t_server_' . $serverid, config('cache.expires'), function () use ($serverid) {
-            return DB::table('t_server')->where('gameid', $serverid)->select('ip', 'gmport')->first();
-        });
+        // $serverGm = Cache::remember('t_server_' . $serverid, config('cache.expires'), function () use ($serverid) {
+        //     return DB::table('t_server')->where('gameid', $serverid)->select('ip', 'gmport')->first();
+        // });
 
-        $client = new Client([
-            'base_uri' => 'http://' . $serverGm->ip . ':' . $serverGm->gmport,
-            'timeout'  => 4.0,
-        ]);
+        // $client = new Client([
+        //     'base_uri' => 'http://' . $serverGm->ip . ':' . $serverGm->gmport,
+        //     'timeout'  => 4.0,
+        // ]);
 
         // 新服人数判断
-        if ($serverid < 9999) {
-            $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
-                return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
-            });
-            if (isset($newServer->gameid) && $newServer->gameid == $serverid) {
-                $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
-                    try {
-                        $online = $client->get('/gm/online');
-                        $onlineRet = json_decode($online->getBody()->getContents(), true);
-                    } catch (\Exception $e) {
-                        $onlineRet = false;
-                    }
-                    return $onlineRet;
-                });
+        // if ($serverid < 9999) {
+        //     $newServer = Cache::remember('t_server_new_', config('cache.expires'), function () use ($serverid) {
+        //         return DB::table('t_server')->where([['gameid', '<', 9999], 'status' => 'online'])->select('gameid')->orderBy('gameid', 'desc')->first();
+        //     });
+        //     if (isset($newServer->gameid) && $newServer->gameid == $serverid) {
+        //         $online = Cache::remember('server_new_online_', \Carbon\Carbon::now()->addSeconds(5), function () {
+        //             try {
+        //                 $online = $client->get('/gm/online');
+        //                 $onlineRet = json_decode($online->getBody()->getContents(), true);
+        //             } catch (\Exception $e) {
+        //                 $onlineRet = false;
+        //             }
+        //             return $onlineRet;
+        //         });
 
-                if (isset($onlineRet['online']) && $onlineRet['online'] >= 1000) {
-                    return $this->responseResult('false', '服务器爆满', ['errorcode' => 3]);
-                }
-            }
-        }
+        //         if (isset($onlineRet['online']) && $onlineRet['online'] >= 1000) {
+        //             return $this->responseResult('false', '服务器爆满', ['errorcode' => 3]);
+        //         }
+        //     }
+        // }
+
+        # -----防沉迷信息同步到游戏服-----
+        $verifiedData = Verified::firstOrCreate(['uid' => $uid]);
+        dd($verifiedData);
 
         try {
             $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
