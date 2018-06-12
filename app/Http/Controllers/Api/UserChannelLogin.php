@@ -123,6 +123,7 @@ class UserChannelLogin extends Controller
             cache(['user_session_' . $sessionid => $sessionid], config('cache.session_expires'));
             cache(['uid' . $sessionid => $user->id], config('cache.session_expires'));
             cache(['channel_' . $sessionid => $channelname], config('cache.session_expires'));
+            cache(['channel_fix' . $sessionid => $channelname_fix], config('cache.session_expires'));
 
             $data = [];
             $data['user'] = $nickname;
@@ -147,7 +148,21 @@ class UserChannelLogin extends Controller
                     $data['serverlist'][$server->id]['status'] = 'offline';
                     $data['serverlist'][$server->id]['tag'] = 'new';
                 }
-        	} else {
+        	} else if ($nickname==0 && $channelname_fix == 'muyou') {
+                $data['recentlist'][1000001]['id'] = 1000001;
+                $serverData = DB::table('t_gameserver')->select('id')->get();
+                foreach ($serverData as $server) {
+                    if ($server->id == 1000001) {
+                        $data['serverlist'][1000001]['id'] = 1000001;
+                        $data['serverlist'][1000001]['status'] = 'online';
+                        $data['serverlist'][1000001]['tag'] = 'new';
+                        continue;
+                    }
+                    $data['serverlist'][$server->id]['id'] = $server->id;
+                    $data['serverlist'][$server->id]['status'] = 'offline';
+                    $data['serverlist'][$server->id]['tag'] = 'new';
+                }
+            } else {
 
         		if (!cache('bGameValid') || $bInWhiteList) {
         			$channelRedlist = Self::systemParams('channel_redlist');

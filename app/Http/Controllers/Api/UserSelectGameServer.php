@@ -19,6 +19,10 @@ class UserSelectGameServer extends Controller
     	$uid = cache('uid' . $session);
         $channel = cache('channel_' . $session);
 
+        if (1000001 == $serverid) {
+            return $this->responseResult('false', '游客区已满，请使用正式账号进行游戏', ['errorcode' => 5]);
+        }
+
         if (empty(cache('user_session_' . $session))) {
             // 登录超时
             return $this->responseResult('false', '异常 - 0x4213', ['errorcode' => 1]);
@@ -62,9 +66,15 @@ class UserSelectGameServer extends Controller
 
         # -----防沉迷信息同步到游戏服-----
         $loginDate = date('Y-m-d H:i:s', time());
+        $channel_fix = cache('channel_fix' . $session);
         $verifiedData = Verified::find($uid);
         if (empty($verifiedData)) {
-            $verifiedData = Verified::create(['uid' => $uid, 'sta' => 0, 'stareward' => 0, 'latestlogin' => $loginDate, 'latestoffline' => date('Y-m-d H:i:s', time() - 3600), 'total_time' => 0]);
+            if ($channel_fix == 'muyou') {
+                $sta = 0;
+            } else {
+                $sta = 5;
+            }
+            $verifiedData = Verified::create(['uid' => $uid, 'sta' => $sta, 'stareward' => 0, 'latestlogin' => $loginDate, 'latestoffline' => date('Y-m-d H:i:s', time() - 3600), 'total_time' => 0]);
         }
 
         if ($verifiedData->sta < 2) {
