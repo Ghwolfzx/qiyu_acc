@@ -13,12 +13,12 @@ class Acclogin extends Model
 
     public static function handleUserLoginLog($user)
     {
-    	$loginData = Self::where('acc_id', $user->id)->where('g_id', '>', '0')->select('g_id')->groupBy('g_id')->get();
+    	$loginData = Self::where('acc_id', $user)->where('g_id', '>', '0')->select('g_id')->groupBy('g_id')->get();
     	$links = [];
     	foreach ($loginData as $login) {
-    		$link = DB::table('t_accountgame_link')->where(['a_id' => $user->id, 'g_id' => $login->g_id])->first();
+    		$link = DB::table('t_accountgame_link')->where(['a_id' => $user, 'g_id' => $login->g_id])->first();
     		if (empty($link)) {
-    			$links[] = DB::table('t_accountgame_link')->insertGetId(['a_id' => $user->id, 'g_id' => $login->g_id, 'g_time' => date('Y-m-d H:i:s', time())]);
+    			$links[] = DB::table('t_accountgame_link')->insertGetId(['a_id' => $user, 'g_id' => $login->g_id, 'g_time' => date('Y-m-d H:i:s', time())]);
     		}
     	}
     	return $links;
