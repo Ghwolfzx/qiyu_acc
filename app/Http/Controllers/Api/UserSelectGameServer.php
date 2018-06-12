@@ -128,7 +128,7 @@ class UserSelectGameServer extends Controller
         if (!isset($result['session'])) {
             $retry = 1;
             while (!isset($result['session']) && $retry--) {
-                $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel);
+                $res = $client->get('/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel . '&sta=' . $verifiedData->sta . '&total_time=' . $verifiedData->total_time . '&latestlogin=' . $verifiedData->latestlogin . '&latestoffline=' . $verifiedData->latestoffline . '&stareward=' . $verifiedData->stareward);
                 $result = json_decode($res->getBody()->getContents(), true);
             }
             if (!isset($result['session'])) {
