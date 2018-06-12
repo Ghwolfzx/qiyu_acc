@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Account;
+use App\Models\Acclogin;
 
 class CheckLink extends Command
 {
@@ -22,12 +23,14 @@ class CheckLink extends Command
             $users = Account::all();
         } else {
             $userId = $this->ask('输入用户 id');
-            $this->info('1处理成功！');
+            $this->info('单独处理：' . $userId);
+            $users = Account::where('id', $userId)->get();
         }
 
         $bar = $this->output->createProgressBar(count($users));
         foreach ($users as $user) {
-            $this->performTask($user);
+            $result = Acclogin::handleUserLoginLog($user);
+            $this->info('用户 ' . $user->id . ' 处理结果：' . json_encode($result));
             $bar->advance();
         }
         $bar->finish();
