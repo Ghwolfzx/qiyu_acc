@@ -64,7 +64,7 @@ class UserSelectGameServer extends Controller
         $loginDate = date('Y-m-d H:i:s', time());
         $verifiedData = Verified::find($uid);
         if (empty($verifiedData)) {
-            $verifiedData = Verified::create(['uid' => $uid, 'sta' => 0, 'latestlogin' => $loginDate, 'latestoffline' => date('Y-m-d H:i:s', time() - 3600), 'total_time' => 0]);
+            $verifiedData = Verified::create(['uid' => $uid, 'sta' => 0, 'stareward' => 0, 'latestlogin' => $loginDate, 'latestoffline' => date('Y-m-d H:i:s', time() - 3600), 'total_time' => 0]);
         }
 
         if ($verifiedData->sta < 2) {
