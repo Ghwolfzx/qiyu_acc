@@ -150,6 +150,7 @@ class UserChannelLogin extends Controller
                 }
         	} else if ($request->nickname==0 && $channelname_fix == 'muyou') {
                 $data['recentlist'][1000001]['id'] = 1000001;
+                $data['user'] = '0';
                 $serverData = DB::table('t_gameserver')->select('id')->get();
                 foreach ($serverData as $server) {
                     if ($server->id == 1000001) {
