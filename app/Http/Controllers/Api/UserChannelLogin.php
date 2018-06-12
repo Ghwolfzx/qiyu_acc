@@ -148,7 +148,7 @@ class UserChannelLogin extends Controller
                     $data['serverlist'][$server->id]['status'] = 'offline';
                     $data['serverlist'][$server->id]['tag'] = 'new';
                 }
-        	} else if ($nickname==0 && $channelname_fix == 'muyou') {
+        	} else if ($request->nickname==0 && $channelname_fix == 'muyou') {
                 $data['recentlist'][1000001]['id'] = 1000001;
                 $serverData = DB::table('t_gameserver')->select('id')->get();
                 foreach ($serverData as $server) {
