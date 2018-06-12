@@ -106,7 +106,8 @@ class UserSelectGameServer extends Controller
                     }
                 }
             } else {
-                if ((time() - strtotime($verifiedData->latestoffline)) >= 18000) {
+                // if ((time() - strtotime($verifiedData->latestoffline)) >= 18000) {
+                if ((time() - strtotime($verifiedData->latestoffline)) >= 600) {
                     $verifiedData->total_time = 0;
                 }
                 $verifiedData->latestlogin = $loginDate;
