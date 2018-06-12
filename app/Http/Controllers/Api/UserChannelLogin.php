@@ -178,6 +178,7 @@ class UserChannelLogin extends Controller
                     // 是否是第一次登录
                     if (empty($visited)) {
                         $data['first'] = true;
+                        $data['user'] = '0';
                     }
 
                     // 最近登录列表
