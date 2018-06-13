@@ -237,14 +237,15 @@ class ChannelRequest extends Controller
         $signature = base64_encode(hash_hmac('sha1', $signature_str, $gionee['SecretKey_gionee'], true));
         $Authorization = sprintf('MAC id="%s",ts="%s",nonce="%s",mac="%s"', $gionee['APIKey_gionee'], $ts, $noce, $signature);
 
-        $url = $gionee['LoginURL_gionee'] . sprintf('?%s', $sessionid);
+        $url = $gionee['LoginURL_gionee'];
         try {
             $response = Self::$client->request('GET', $url, [
                 'headers' => [
                     'charset'      => 'utf-8',
                     'Content-type' => "application/x-www-form-urlencoded",
                     'Authorization'=> $Authorization,
-                ]
+                ],
+                'body' => $sessionid,
             ]);
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
