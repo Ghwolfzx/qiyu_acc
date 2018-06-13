@@ -116,20 +116,18 @@ class ChannelRequest extends Controller
 
         $sign = md5($x7syn['appkey_x7sy'] . $sessionid);
 
-        $bodys = 'tokenkey=' . urlencode($sessionid) . '&sign=' . $sign;
-
-        $url = $x7syn['LoginURL_x7sy'];
+        $url = $x7syn['LoginURL_x7sy'] . '?tokenkey=' . urlencode($sessionid) . '&sign=' . $sign;
         try {
             $response = Self::$client->request('POST', $url, [
                 'headers' => [
                     'charset'      => 'utf-8',
                     'Content-type' => "application/x-www-form-urlencoded",
                 ],
-                'body' => $bodys,
             ]);
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
+                dd($data);
                 if ($data['errorno'] == 0) {
                     return [true, $data['data']['guid'], $data['data']['username']];
                 }
@@ -138,6 +136,66 @@ class ChannelRequest extends Controller
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    // 有问题
+    public function huawei($uin, $sessionid, $nickname, $channeltag)
+    {
+        $huawei = config('ChannelParam.huawein');
+
+        $url = $huawei['LoginURL_huawei'] . sprintf('?nsp_svc=OpenUP.User.getInfo&nsp_ts=%d&access_token=%s', time(), urlencode($sessionid));
+        try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ]
+            ]);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                if (!isset($data['error'])) {
+                    return [true, $data['userID'], $data['userName']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function oppo($uin, $sessionid, $nickname, $channeltag)
+    {
+        $oppo = config('ChannelParam.oppo');
+
+        $oppoTime = (int)(LARAVEL_START * 1000000);
+        $oppoRandom = random_int(0, 999999999);
+
+        $baseStr = sprintf('oauthConsumerKey=%s&oauthToken=%s&oauthSignatureMethod=HMAC-SHA1&oauthTimestamp=%s&oauthNonce=%d&oauthVersion=1.0&',
+                    $oppo['AppKey_oppo'], urlencode($sessionid), $oppoTime, $oppoRandom);
+
+        $oauthSignature = urlencode(base64_encode(hash_hmac('sha1', $baseStr, $oppo['AppSecret_oppo'] . '&', true)));
+        $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, urlencode($sessionid));
+        // try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'params'       => $baseStr,
+                    'oauthSignature'=> $oauthSignature,
+                ]
+            ]);
+
+            dd($response);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data['resultCode'] == 200 && $data['ssoid'] == $uin) {
+                    return [true, $data['ssoid'], $data['userName']];
+                }
+            }
+            return false;
+        // } catch (\Exception $e) {
+        //     return false;
+        // }
     }
 
     public function uc($uin, $sessionid, $nickname, $channeltag)
@@ -181,66 +239,6 @@ class ChannelRequest extends Controller
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 return [true, $data["id"], $data["name"]];
-            }
-            return false;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    public function oppo($uin, $sessionid, $nickname, $channeltag)
-    {
-        $oppo = config('ChannelParam.oppo');
-
-        $oppoTime = (int)(LARAVEL_START * 1000000);
-        $oppoRandom = random_int(0, 999999999);
-
-        $baseStr = sprintf('oauthConsumerKey=%s&oauthToken=%s&oauthSignatureMethod=HMAC-SHA1&oauthTimestamp=%s&oauthNonce=%d&oauthVersion=1.0&',
-                    $oppo['AppKey_oppo'], urlencode($sessionid), $oppoTime, $oppoRandom);
-
-        $oauthSignature = urlencode(base64_encode(hash_hmac('sha1', $baseStr, $oppo['AppSecret_oppo'] . '&', true)));
-        $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, urlencode($sessionid));
-        try {
-            $response = Self::$client->request('GET', $url, [
-                'headers' => [
-                    'charset'      => 'utf-8',
-                    'params'       => $baseStr,
-                    'oauthSignature'=> $oauthSignature,
-                ]
-            ]);
-
-            if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody()->getContents(), true);
-
-                if ($data['resultCode'] == 200 && $data['ssoid'] == $uin) {
-                    return [true, $data['ssoid'], $data['userName']];
-                }
-            }
-            return false;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    // 有问题
-    public function huawei($uin, $sessionid, $nickname, $channeltag)
-    {
-        $huawei = config('ChannelParam.huawein');
-
-        $url = $huawei['LoginURL_huawei'] . sprintf('?nsp_svc=OpenUP.User.getInfo&nsp_ts=%d&access_token=%s', time(), urlencode($sessionid));
-        try {
-            $response = Self::$client->request('GET', $url, [
-                'headers' => [
-                    'charset'      => 'utf-8',
-                    'Content-type' => "application/x-www-form-urlencoded",
-                ]
-            ]);
-            if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody()->getContents(), true);
-
-                if (!isset($data['error'])) {
-                    return [true, $data['userID'], $data['userName']];
-                }
             }
             return false;
         } catch (\Exception $e) {
