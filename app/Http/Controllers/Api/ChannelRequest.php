@@ -316,6 +316,38 @@ class ChannelRequest extends Controller
         }
     }
 
+    public function baidu($uin, $sessionid, $nickname, $channeltag)
+    {
+        $baidu = config('ChannelParam.baidu');
+
+        $sign = md5($baidu['AppId_baidu'] . $sessionid . $baidu['AppSecret_baidu']);
+
+        $bodys = 'AppID=' . $baidu['AppId_baidu'] . '&AccessToken=' . $sessionid . '&Sign=' . $sign;
+
+        $url = $baidu['LoginURL_baidu'];
+        try {
+            $response = Self::$client->request('POST', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+                'body' => $bodys
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                $sign = md5($data['AppID'] . $data['ResultCode'] . $data['Content'] . $baidu['AppSecret_baidu']);
+                if ($data["ResultCode"] == 1 && $data["Sign"] == $sign) {
+                    $uid = json_decode(base64_decode($data['Content']), true);
+                    return [true, $uid['UID'], ''];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
         $opt = array(
                 "http"=>array(
