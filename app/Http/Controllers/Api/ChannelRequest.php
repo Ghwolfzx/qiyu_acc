@@ -81,7 +81,7 @@ class ChannelRequest extends Controller
     {
         $dangle = config('ChannelParam.dangle');
 
-        $sign = md5($dangle['LoginURL_dangle'] . '|' . $dangle['AppKey_dangle'] . '|' . $sessionid . '|' . $uin);
+        $sign = md5($dangle['AppId_dangle'] . '|' . $dangle['AppKey_dangle'] . '|' . $sessionid . '|' . $uin);
 
         if (strpos($sessionid, 'ZB_') === false) {
             $loginURL = $dangle['LoginURL_dangle_lst'][0];
@@ -91,11 +91,15 @@ class ChannelRequest extends Controller
 
         $url = $loginURL . sprintf('?appid=%s&token=%s&umid=%s&sig=%s', $dangle['AppId_dangle'], $sessionid, $uin, $sign);
         try {
-            $response = Self::$client->request('GET', $url);
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ]
+            ]);
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-
                 if ($data["valid"] == 1 && $data['msg_code'] == 2000) {
                     return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickname']];
                 }
