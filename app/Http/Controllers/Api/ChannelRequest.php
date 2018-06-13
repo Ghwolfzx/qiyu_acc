@@ -110,6 +110,36 @@ class ChannelRequest extends Controller
         }
     }
 
+    public function x7syn($uin, $sessionid, $nickname, $channeltag)
+    {
+        $x7syn = config('ChannelParam.x7syn');
+
+        $sign = md5($x7syn['appkey_x7sy'] . $sessionid);
+
+        $bodys = 'tokenkey=' . urlencode($sessionid) . '&sign=' . $sign;
+
+        $url = $x7syn['LoginURL_x7sy'];
+        try {
+            $response = Self::$client->request('POST', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+                'body' => $bodys,
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data['errorno'] == 0) {
+                    return [true, $data['data']['guid'], $data['data']['username']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function uc($uin, $sessionid, $nickname, $channeltag)
     {
         $uc = config('ChannelParam.uc');
