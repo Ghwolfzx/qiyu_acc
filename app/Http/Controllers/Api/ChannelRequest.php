@@ -250,8 +250,8 @@ class ChannelRequest extends Controller
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 \Log::info('gionee ====' . $response->getBody()->getContents());
-                if ($data['retcode'] == 0) {
-                    return [true, $data['data']['openid'], ''];
+                if (!isset($data['r']) || $data['r'] == 0) {
+                    return true;
                 }
             }
             return false;
