@@ -225,6 +225,40 @@ class ChannelRequest extends Controller
             return false;
         }
     }
+
+    public function gionee($uin, $sessionid, $nickname, $channeltag)
+    {
+        $gionee = config('ChannelParam.gionee');
+
+        $ts = time();
+        $noce = getSession($uin, $sessionid);
+        $signature_str = sprintf("%s\n%s\n%s\n%s\n%s\n%s\n\n", $ts, $noce, "POST", "/account/verify.do", "id.gionee.com", "443");
+
+        $signature = base64_encode(hash_hmac('sha1', $signature_str, $gionee['SecretKey_gionee'], true));
+        $Authorization = sprintf('MAC id="%s",ts="%s",nonce="%s",mac="%s"', $gionee['APIKey_gionee'], $ts, $noce, $signature);
+
+        $url = $gionee['LoginURL_gionee'] . sprintf('?%s', $sessionid);
+        try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                    'Authorization'=> $Authorization,
+                ]
+            ]);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('gionee ====' . $response->getBody()->getContents());
+                if ($data['retcode'] == 0) {
+                    return [true, $data['data']['openid'], ''];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
         $opt = array(
                 "http"=>array(
