@@ -77,6 +77,35 @@ class ChannelRequest extends Controller
         }
     }
 
+    public function dangle($uin, $sessionid, $nickname, $channeltag)
+    {
+        $dangle = config('ChannelParam.dangle');
+
+        $sign = md5($dangle['LoginURL_dangle'] . '|' . $dangle['AppKey_dangle'] . '|' . $sessionid . '|' . $uin);
+
+        if (strpos($sessionid, 'ZB_') === false) {
+            $loginURL = $dangle['LoginURL_dangle_lst'][0];
+        } else {
+            $loginURL = $dangle['LoginURL_dangle_lst'][1];
+        }
+
+        $url = $loginURL . sprintf('?appid=%s&token=%s&umid=%s&sig=%s', $dangle['AppId_dangle'], $sessionid, $uin, $sign);
+        try {
+            $response = Self::$client->request('GET', $url);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                if ($data["valid"] == 1 && $data['msg_code'] == 2000) {
+                    return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickname']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function uc($uin, $sessionid, $nickname, $channeltag)
     {
         $uc = config('ChannelParam.uc');
