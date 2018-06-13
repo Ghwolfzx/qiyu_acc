@@ -336,6 +336,7 @@ class ChannelRequest extends Controller
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('baidu ====' . $response->getBody()->getContents());
                 $sign = md5($data['AppID'] . $data['ResultCode'] . $data['Content'] . $baidu['AppSecret_baidu']);
                 if ($data["ResultCode"] == 1 && $data["Sign"] == $sign) {
                     $uid = json_decode(base64_decode($data['Content']), true);
