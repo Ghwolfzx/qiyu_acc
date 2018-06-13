@@ -101,7 +101,7 @@ class ChannelRequest extends Controller
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 if ($data["valid"] == 1 && $data['msg_code'] == 2000) {
-                    return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickname']];
+                    return true;
                 }
             }
             return false;
