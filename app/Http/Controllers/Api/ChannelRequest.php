@@ -260,27 +260,29 @@ class ChannelRequest extends Controller
         }
     }
 
-    public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
-        $opt = array(
-                "http"=>array(
-                        "method"=>"GET",
-                        'header'=>array("param:".$requestString, "oauthsignature:".$sign),
-                )
-        );
-        $res=file_get_contents($request_serverUrl,null,stream_context_create($opt));
-        return $res;
-    }
+    public function lenovo($uin, $sessionid, $nickname, $channeltag)
+    {
+        $lenovo = config('ChannelParam.lenovo');
 
-    private function _assemblyParameters($dataParams){
-       $requestString               = "";
-        foreach($dataParams as $key=>$value){
-            $requestString = $requestString . $key . "=" . $value . "&";
+        $url = $lenovo['LoginURL_lenovo'] . sprintf('?lpsust=%s&realm=%s', $sessionid, $lenovo['AppId_lenovo']);
+        try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ]
+            ]);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                dd($data);
+                if (!isset($data['error'])) {
+                    return [true, $data['userID'], $data['userName']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
         }
-        return $requestString;
-    }
-
-    private function _signatureNew($oauthSignature,$requestString){
-        return urlencode(base64_encode( hash_hmac( 'sha1', $requestString,$oauthSignature,true) ));
     }
 
     public function uc($uin, $sessionid, $nickname, $channeltag)
@@ -305,13 +307,36 @@ class ChannelRequest extends Controller
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 if ($data["state"]['code'] == 1) {
-                    return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickname']];
+                    return [true, $data["data"]['creator'] . '_' . $data['data']['accountId'], $data["data"]['nickName']];
                 }
             }
             return false;
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
+        $opt = array(
+                "http"=>array(
+                        "method"=>"GET",
+                        'header'=>array("param:".$requestString, "oauthsignature:".$sign),
+                )
+        );
+        $res=file_get_contents($request_serverUrl,null,stream_context_create($opt));
+        return $res;
+    }
+
+    private function _assemblyParameters($dataParams){
+       $requestString               = "";
+        foreach($dataParams as $key=>$value){
+            $requestString = $requestString . $key . "=" . $value . "&";
+        }
+        return $requestString;
+    }
+
+    private function _signatureNew($oauthSignature,$requestString){
+        return urlencode(base64_encode( hash_hmac( 'sha1', $requestString,$oauthSignature,true) ));
     }
 
     public function _360($uin, $sessionid, $nickname, $channeltag)
@@ -329,31 +354,5 @@ class ChannelRequest extends Controller
         } catch (\Exception $e) {
             return false;
         }
-    }
-
-    public function lenovo($uin, $sessionid, $nickname, $channeltag)
-    {
-        $lenovo = config('ChannelParam.lenovo');
-
-        $url = $lenovo['LoginURL_lenovo'] . sprintf('?lpsust=%s&realm=%s', $sessionid, $lenovo['AppId_lenovo']);
-        try {
-            $response = Self::$client->request('GET', $url, [
-                'headers' => [
-                    'charset'      => 'utf-8',
-                    'Content-type' => "application/x-www-form-urlencoded",
-                ]
-            ]);
-            if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody()->getContents(), true);
-                dd($data);
-                if (!isset($data['error'])) {
-                    return [true, $data['userID'], $data['userName']];
-                }
-            }
-            return false;
-        } catch (\Exception $e) {
-            return false;
-        }
-
     }
 }
