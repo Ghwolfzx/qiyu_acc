@@ -168,7 +168,6 @@ class ChannelRequest extends Controller
     {
         $oppo = config('ChannelParam.oppo');
 
-
         $time = microtime(true);
         $dataParams['oauthConsumerKey']     = $oppo['AppKey_oppo'];
         $dataParams['oauthToken']           = ($sessionid);
@@ -176,22 +175,23 @@ class ChannelRequest extends Controller
         $dataParams['oauthTimestamp']       = intval($time*1000);
         $dataParams['oauthNonce']           = intval($time) + rand(0,9);
         $dataParams['oauthVersion']         = "1.0";
-        $baseStr                      = $this->_assemblyParameters($dataParams);
+        $requestString                      = $this->_assemblyParameters($dataParams);
 
-
-        $oauthSignature = urlencode(base64_encode(hash_hmac('sha1', $baseStr, $oppo['AppSecret_oppo'] . '&', true)));
+        $oauthSignature = $oppo['AppSecret_oppo']."&";
+        $sign = $this->_signatureNew($oauthSignature,$requestString);
 
         $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, ($sessionid));
         try {
             $response = Self::$client->request('GET', $url, [
                 'headers' => [
-                    'param'       => $baseStr,
-                    'oauthsignature'=> $oauthSignature,
+                    'param'       => $requestString,
+                    'oauthsignature'=> $sign,
                 ]
             ]);
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
+                dd($data);
                 if ($data['resultCode'] == 200 && $data['ssoid'] == $uin) {
                     return [true, $data['ssoid'], $data['userName']];
                 }
@@ -202,12 +202,51 @@ class ChannelRequest extends Controller
         }
     }
 
+    public function vivon($uin, $sessionid, $nickname, $channeltag)
+    {
+        $vivon = config('ChannelParam.vivon');
+
+        $url = $vivon['LoginURL_vivo'] . sprintf('?authtoken=%s&from=52muyou', $sessionid);
+        try {
+            $response = Self::$client->request('POST', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ]
+            ]);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                dd($data);
+                if ($data['retcode'] == 0) {
+                    return [true, $data['data']['openid'], ''];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+    public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
+        $opt = array(
+                "http"=>array(
+                        "method"=>"GET",
+                        'header'=>array("param:".$requestString, "oauthsignature:".$sign),
+                )
+        );
+        $res=file_get_contents($request_serverUrl,null,stream_context_create($opt));
+        return $res;
+    }
+
     private function _assemblyParameters($dataParams){
        $requestString               = "";
         foreach($dataParams as $key=>$value){
-          $requestString = $requestString . $key . "=" . $value . "&";
+            $requestString = $requestString . $key . "=" . $value . "&";
         }
         return $requestString;
+    }
+
+    private function _signatureNew($oauthSignature,$requestString){
+        return urlencode(base64_encode( hash_hmac( 'sha1', $requestString,$oauthSignature,true) ));
     }
 
     public function uc($uin, $sessionid, $nickname, $channeltag)
