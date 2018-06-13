@@ -110,6 +110,7 @@ class ChannelRequest extends Controller
         }
     }
 
+    // 未完成
     public function x7syn($uin, $sessionid, $nickname, $channeltag)
     {
         $x7syn = config('ChannelParam.x7syn');
@@ -127,7 +128,6 @@ class ChannelRequest extends Controller
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                dd($data);
                 if ($data['errorno'] == 0) {
                     return [true, $data['data']['guid'], $data['data']['username']];
                 }
@@ -168,24 +168,28 @@ class ChannelRequest extends Controller
     {
         $oppo = config('ChannelParam.oppo');
 
-        $oppoTime = (int)(LARAVEL_START * 1000000);
-        $oppoRandom = random_int(0, 999999999);
 
-        $baseStr = sprintf('oauthConsumerKey=%s&oauthToken=%s&oauthSignatureMethod=HMAC-SHA1&oauthTimestamp=%s&oauthNonce=%d&oauthVersion=1.0&',
-                    $oppo['AppKey_oppo'], urlencode($sessionid), $oppoTime, $oppoRandom);
+        $time = microtime(true);
+        $dataParams['oauthConsumerKey']     = $oppo['AppKey_oppo'];
+        $dataParams['oauthToken']           = urlencode($sessionid);
+        $dataParams['oauthSignatureMethod'] = "HMAC-SHA1";
+        $dataParams['oauthTimestamp']       = intval($time*1000);
+        $dataParams['oauthNonce']           = intval($time) + rand(0,9);
+        $dataParams['oauthVersion']         = "1.0";
+        $baseStr                      = $this->_assemblyParameters($dataParams);
+
 
         $oauthSignature = urlencode(base64_encode(hash_hmac('sha1', $baseStr, $oppo['AppSecret_oppo'] . '&', true)));
+
         $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, urlencode($sessionid));
-        // try {
+        try {
             $response = Self::$client->request('GET', $url, [
                 'headers' => [
-                    'charset'      => 'utf-8',
-                    'params'       => $baseStr,
-                    'oauthSignature'=> $oauthSignature,
+                    'param'       => $baseStr,
+                    'oauthsignature'=> $oauthSignature,
                 ]
             ]);
 
-            dd($response);
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
                 if ($data['resultCode'] == 200 && $data['ssoid'] == $uin) {
@@ -193,9 +197,17 @@ class ChannelRequest extends Controller
                 }
             }
             return false;
-        // } catch (\Exception $e) {
-        //     return false;
-        // }
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    private function _assemblyParameters($dataParams){
+       $requestString               = "";
+        foreach($dataParams as $key=>$value){
+          $requestString = $requestString . $key . "=" . $value . "&";
+        }
+        return $requestString;
     }
 
     public function uc($uin, $sessionid, $nickname, $channeltag)
