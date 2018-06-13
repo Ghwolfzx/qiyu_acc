@@ -216,7 +216,6 @@ class ChannelRequest extends Controller
             ]);
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                dd($data);
                 if ($data['retcode'] == 0) {
                     return [true, $data['data']['openid'], ''];
                 }
