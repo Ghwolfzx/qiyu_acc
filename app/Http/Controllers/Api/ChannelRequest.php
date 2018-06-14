@@ -375,13 +375,18 @@ class ChannelRequest extends Controller
     {
         $anfengn = config('ChannelParam.anfengn');
         $appId = $anfengn['Params_Anfan'][$channeltag]['AppId'];
-        dd($appId);
+        $params = [
+            'open_id' => $uin,
+            'token' => $sessionid,
+            'app_id' => $appId,
+        ];
+        ksort($params);
+        $tmp = $this->_assemblyParameters($params);
+        $sign = md5($tmp . 'sign_key=' . $anfengn['Params_Anfan'][$channeltag]['SIGN']);
 
-        $sign = md5($baidu['AppId_baidu'] . $sessionid . $baidu['AppSecret_baidu']);
+        $bodys = $tmp . '&sign=' . $sign;
 
-        $bodys = 'AppID=' . $baidu['AppId_baidu'] . '&AccessToken=' . $sessionid . '&Sign=' . $sign;
-
-        $url = $baidu['LoginURL_baidu'];
+        $url = $anfengn['LoginURL2_anfan'];
         try {
             $response = Self::$client->request('POST', $url, [
                 'headers' => [
@@ -393,11 +398,9 @@ class ChannelRequest extends Controller
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                \Log::info('baidu ====' . $response->getBody()->getContents());
-                $sign = md5($data['AppID'] . $data['ResultCode'] . $data['Content'] . $baidu['AppSecret_baidu']);
-                if ($data["ResultCode"] == 1 && $data["Sign"] == $sign) {
-                    $uid = json_decode(base64_decode($data['Content']), true);
-                    return [true, $uid['UID'], ''];
+                \Log::info('anfengn ====' . $response->getBody()->getContents());
+                if ($data["code"] === 0) {
+                    return true;
                 }
             }
             return false;
