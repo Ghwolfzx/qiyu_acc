@@ -73,7 +73,7 @@ class UserChannelLogin extends Controller
     	$uin = $request->uin; #相当于account
 	    $sessionid = $request->sessionid;
 	    $nickname  = $request->nickname;
-	    $uuid = $request->uuid;
+	    $uuid = $request->uuid ?? '123';
 	    $deviceType = $request->device;
 	    $os = $request->os;
 	    $version = $request->version;
