@@ -143,6 +143,11 @@ class ChannelRequest extends Controller
     {
         $huawei = config('ChannelParam.huawein');
 
+        $coverKey = $this->convert_publicKey($huawei['VerifyToken_RSA_Public_key_huawei']);
+        $tmp = $huawei['AppId_huawei'] . $nickname . $uin;
+        $ok = openssl_verify($tmp, base64_decode($sessionid), $coverKey, OPENSSL_ALGO_SHA256);
+        openssl_free_key($coverKey);
+        dd($ok);die;
         $url = $huawei['LoginURL_huawei'] . sprintf('?nsp_svc=OpenUP.User.getInfo&nsp_ts=%d&access_token=%s', time(), urlencode($sessionid));
         try {
             $response = Self::$client->request('GET', $url, [
@@ -163,6 +168,23 @@ class ChannelRequest extends Controller
             return false;
         }
     }
+
+    private function convert_publicKey($p_key)
+    {
+        $pem = chunk_split($p_key,64,"\n");
+        return openssl_pkey_get_public("-----BEGIN PUBLIC KEY-----\n" . $pem . "-----END PUBLIC KEY-----\n");
+    }
+    private function pikeyDecrypt($eccryptData,$decryptKey) {
+        $decrypted = "";
+        $decodeStr = base64_decode($eccryptData);
+        $enArray = str_split($decodeStr, 256);
+
+        foreach ($enArray as $va) {
+            openssl_private_decrypt($va,$decryptedTemp,$decryptKey);//私钥解密
+            $decrypted .= $decryptedTemp;
+        }
+        return $decrypted;
+   }
 
     public function oppo($uin, $sessionid, $nickname, $channeltag)
     {
