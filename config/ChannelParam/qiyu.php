@@ -73,6 +73,11 @@ return [
                 "appkey" => "eccff038751ce4b39a6d8f5f1dae51c9",
                 "paykey" => "1d4616a8cbea16b03d5c395bf5d2c9d1",
         ],
+        "qiyuiosXYSSN" => [
+                "appid" => "100319",
+                "appkey" => "a1cac641084f3bcd85d77fbfc375cbe5",
+                "paykey" => "8e5cabc49869262187133c6424b558fa",
+        ],
     ],
 
     'ip_set' => ['106.14.250.138'],
