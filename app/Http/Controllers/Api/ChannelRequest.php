@@ -409,6 +409,30 @@ class ChannelRequest extends Controller
         }
     }
 
+    public function coolpad($uin, $sessionid, $nickname, $channeltag)
+    {
+        $coolpad = config('ChannelParam.coolpad');
+
+        $url = $coolpad['LoginURL_coolpad'] . sprintf("?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", $coolpad['AppID_coolpad'], $coolpad['AppKey_coolpad'], $sessionid, $coolpad['AppKey_coolpad']);
+        try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('coolpad ====' . $response->getBody()->getContents());
+                return [true, $data['openid'], $data['access_token']];
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     public function OauthPostExecuteNew($sign,$requestString,$request_serverUrl){
         $opt = array(
                 "http"=>array(
