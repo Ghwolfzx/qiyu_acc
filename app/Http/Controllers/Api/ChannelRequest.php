@@ -295,10 +295,10 @@ class ChannelRequest extends Controller
                 ]
             ]);
             if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody()->getContents(), true);
-                dd($data);
-                if (!isset($data['error'])) {
-                    return [true, $data['userID'], $data['userName']];
+                $data = $response->getBody()->getContents();
+                $data = json_decode(json_encode(simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+                if (!isset($data['error_code'])) {
+                    return [true, $data['AccountID'], $data['Username']];
                 }
             }
             return false;
@@ -413,6 +413,30 @@ class ChannelRequest extends Controller
     {
         $coolpad = config('ChannelParam.coolpad');
 
+        $url = $coolpad['LoginURL_coolpad'] . sprintf("?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", $coolpad['AppID_coolpad'], $coolpad['AppKey_coolpad'], $sessionid, $coolpad['AppKey_coolpad']);
+        try {
+            $response = Self::$client->request('GET', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('coolpad ====' . $response->getBody()->getContents());
+                return [true, $data['openid'], $data['access_token']];
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function mz($uin, $sessionid, $nickname, $channeltag)
+    {
+        $mz = config('ChannelParam.mz');
+        dd($mz);
         $url = $coolpad['LoginURL_coolpad'] . sprintf("?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", $coolpad['AppID_coolpad'], $coolpad['AppKey_coolpad'], $sessionid, $coolpad['AppKey_coolpad']);
         try {
             $response = Self::$client->request('GET', $url, [
