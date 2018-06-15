@@ -142,37 +142,23 @@ class ChannelRequest extends Controller
     {
         $huawei = config('ChannelParam.huawein');
 
-        $coverKey = $this->convert_publicKey($huawei['VerifyToken_RSA_Public_key_huawei']);
-        $openssl_public_key = openssl_get_publickey($coverKey);
+        $filename = dirname(__FILE__)."/payPublicKey.pem";
         $tmp = $huawei['AppId_huawei'] . $nickname . $uin;
+        $pubKey = file_get_contents($filename);
+        $openssl_public_key = openssl_get_publickey($pubKey);
         $ok = openssl_verify($tmp, base64_decode($sessionid), $openssl_public_key, OPENSSL_ALGO_SHA256);
-        // openssl_free_key($openssl_public_key);
-        dd($ok);die;
-        $url = $huawei['LoginURL_huawei'] . sprintf('?nsp_svc=OpenUP.User.getInfo&nsp_ts=%d&access_token=%s', time(), urlencode($sessionid));
-        try {
-            $response = Self::$client->request('GET', $url, [
-                'headers' => [
-                    'charset'      => 'utf-8',
-                    'Content-type' => "application/x-www-form-urlencoded",
-                ]
-            ]);
-            if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody()->getContents(), true);
-
-                if (!isset($data['error'])) {
-                    return [true, $data['userID'], $data['userName']];
-                }
-            }
-            return false;
-        } catch (\Exception $e) {
+        openssl_free_key($openssl_public_key);
+        if ($ok) {
+            return true;
+        } else {
             return false;
         }
     }
 
     private function convert_publicKey($p_key)
     {
-        $pem = chunk_split($p_key,63,"\n");
-        return ("-----BEGIN PUBLIC KEY-----\n" . $pem . "-----END PUBLIC KEY-----");
+        $pem = chunk_split($p_key,64,"\n");
+        return openssl_get_publickey("-----BEGIN PUBLIC KEY-----\n" . $pem . "-----END PUBLIC KEY-----");
     }
     private function pikeyDecrypt($eccryptData,$decryptKey) {
         $decrypted = "";
