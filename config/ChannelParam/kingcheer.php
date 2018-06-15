@@ -22,9 +22,9 @@ return [
         ],
         // ios
         "jingqiIosCASG" => [
-            "appid" => "20245",
-            "appkey" => "ddf59bcf1205458ab959e1427f8f9f42",
-            "paykey" => "6aa04c7175da4d7bad83ee20f37f40bc",
+            "appid" => "20258",
+            "appkey" => "a8d68a119a184d79a66f675a7ddd9345",
+            "paykey" => "84d89ab8905f478192ff922847caba82",
         ],
         // 魔王下凡
         "jingqiAMWXF" => [
