@@ -110,7 +110,6 @@ class ChannelRequest extends Controller
         }
     }
 
-    // 未完成
     public function x7syn($uin, $sessionid, $nickname, $channeltag)
     {
         $x7syn = config('ChannelParam.x7syn');
