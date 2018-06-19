@@ -199,7 +199,6 @@ class ChannelRequest extends Controller
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                dd($data);
                 if ($data['resultCode'] == 200 && $data['ssoid'] == $uin) {
                     return [true, $data['ssoid'], $data['userName']];
                 }
