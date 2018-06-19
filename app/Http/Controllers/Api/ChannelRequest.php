@@ -178,7 +178,7 @@ class ChannelRequest extends Controller
 
         $time = microtime(true);
         $dataParams['oauthConsumerKey']     = $oppo['AppKey_oppo'];
-        $dataParams['oauthToken']           = ($sessionid);
+        $dataParams['oauthToken']           = urlencode($sessionid);
         $dataParams['oauthSignatureMethod'] = "HMAC-SHA1";
         $dataParams['oauthTimestamp']       = intval($time*1000);
         $dataParams['oauthNonce']           = intval($time) + rand(0,9);
@@ -188,7 +188,7 @@ class ChannelRequest extends Controller
         $oauthSignature = $oppo['AppSecret_oppo']."&";
         $sign = $this->_signatureNew($oauthSignature,$requestString);
 
-        $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, ($sessionid));
+        $url = $oppo['LoginURL_oppo'] . sprintf('?fileId=%s&token=%s', $uin, $dataParams['oauthToken']);
         try {
             $response = Self::$client->request('GET', $url, [
                 'headers' => [
