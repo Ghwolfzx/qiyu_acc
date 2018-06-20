@@ -145,9 +145,10 @@ class ChannelRequest extends Controller
         $filename = dirname(__FILE__)."/payPublicKey.pem";
         $tmp = $huawei['AppId_huawei'] . $nickname . $uin;
         $pubKey = file_get_contents($filename);
-        $openssl_public_key = openssl_get_publickey($pubKey);
+        $openssl_public_key = openssl_pkey_get_public($pubKey);
         $ok = openssl_verify($tmp, base64_decode($sessionid), $openssl_public_key, OPENSSL_ALGO_SHA256);
-        openssl_free_key($openssl_public_key);
+        // openssl_free_key($openssl_public_key);
+        dd(openssl_pkey_get_details($openssl_public_key), ['sign'=>base64_decode($sessionid)], $ok);die;
         if ($ok) {
             return true;
         } else {
@@ -160,17 +161,6 @@ class ChannelRequest extends Controller
         $pem = chunk_split($p_key,64,"\n");
         return openssl_get_publickey("-----BEGIN PUBLIC KEY-----\n" . $pem . "-----END PUBLIC KEY-----");
     }
-    private function pikeyDecrypt($eccryptData,$decryptKey) {
-        $decrypted = "";
-        $decodeStr = base64_decode($eccryptData);
-        $enArray = str_split($decodeStr, 256);
-
-        foreach ($enArray as $va) {
-            openssl_private_decrypt($va,$decryptedTemp,$decryptKey);//私钥解密
-            $decrypted .= $decryptedTemp;
-        }
-        return $decrypted;
-   }
 
     public function oppo($uin, $sessionid, $nickname, $channeltag)
     {
@@ -421,20 +411,34 @@ class ChannelRequest extends Controller
     public function mz($uin, $sessionid, $nickname, $channeltag)
     {
         $mz = config('ChannelParam.mz');
-        dd($mz);
-        $url = $coolpad['LoginURL_coolpad'] . sprintf("?grant_type=authorization_code&client_id=%s&client_secret=%s&code=%s&redirect_uri=%s", $coolpad['AppID_coolpad'], $coolpad['AppKey_coolpad'], $sessionid, $coolpad['AppKey_coolpad']);
+
+        $ts = time();
+        $sign = md5(sprintf("app_id=%s&session_id=%s&ts=%s&uid=%s:%s", $mz['AppID_mz'], $sessionid, $ts, $uin, $mz['AppSecret_mz']));
+
+        $bodys = [
+        	'app_id' => $mz['AppID_mz'],
+	        'session_id' => $sessionid,
+	        'uid' => $uin,
+	        'ts' => $ts,
+	        'sign_type' => "md5",
+	        'sign' => $sign,
+        ];
+        $url = $mz['LoginURL_mz'];
         try {
-            $response = Self::$client->request('GET', $url, [
+            $response = Self::$client->request('POST', $url, [
                 'headers' => [
                     'charset'      => 'utf-8',
                     'Content-type' => "application/x-www-form-urlencoded",
                 ],
+                'body' => $bodys,
             ]);
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                \Log::info('coolpad ====' . $response->getBody()->getContents());
-                return [true, $data['openid'], $data['access_token']];
+                \Log::info('mz ====' . $response->getBody()->getContents());
+                if ($data['code'] == 200) {
+                	return true;
+                }
             }
             return false;
         } catch (\Exception $e) {
