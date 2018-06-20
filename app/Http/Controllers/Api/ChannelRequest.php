@@ -110,7 +110,7 @@ class ChannelRequest extends Controller
         }
     }
 
-    public function x7syn($uin, $sessionid, $nickname, $channeltag)
+    public function x7sy($uin, $sessionid, $nickname, $channeltag)
     {
         $x7syn = config('ChannelParam.x7syn');
 
@@ -244,7 +244,7 @@ class ChannelRequest extends Controller
         }
     }
 
-    public function vivon($uin, $sessionid, $nickname, $channeltag)
+    public function vivo($uin, $sessionid, $nickname, $channeltag)
     {
         $vivon = config('ChannelParam.vivon');
 
@@ -391,7 +391,7 @@ class ChannelRequest extends Controller
         }
     }
 
-    public function anfengn($uin, $sessionid, $nickname, $channeltag)
+    public function anfeng($uin, $sessionid, $nickname, $channeltag)
     {
         $anfengn = config('ChannelParam.anfengn');
         $appId = $anfengn['Params_Anfan'][$channeltag]['AppId'];

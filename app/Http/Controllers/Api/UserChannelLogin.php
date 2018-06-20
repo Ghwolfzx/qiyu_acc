@@ -32,6 +32,12 @@ class UserChannelLogin extends Controller
                         $loginChannelHandle[$channel] = '_' . $channel;
                     } else if ($channel == 'huawein') {
                         $loginChannelHandle[$channel] = 'huawei';
+                    } else if ($channel == 'vivon') {
+                        $loginChannelHandle[$channel] = 'vivo';
+                    } else if ($channel == 'anfengn') {
+                        $loginChannelHandle[$channel] = 'anfeng';
+                    } else if ($channel == 'x7syn') {
+                        $loginChannelHandle[$channel] = 'x7sy';
                     } else {
                         $loginChannelHandle[$channel] = $channel;
                     }
