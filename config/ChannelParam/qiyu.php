@@ -88,6 +88,11 @@ return [
                 "appkey" => "720d3a5ce61671dd363e28d5995ed424",
                 "paykey" => "02edd66bc57beee50ede6b5f3f5b71db",
         ],
+        "qiyuiosSJYYQ" => [
+                "appid" => "100284",
+                "appkey" => "e226ea9c32cb9a51744866f55f363430",
+                "paykey" => "6c3c82864206cad56d2f525a2fd47035",
+        ],
 
     ],
 
