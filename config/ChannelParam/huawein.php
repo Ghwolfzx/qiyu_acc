@@ -3,7 +3,8 @@
 return [
 	'AppId_huawei' => "10421061",
 	'AppSecret_huawei' => "utkk2n1ar3zlacfsg7t2fh0wom105dzm",
-	'LoginURL_huawei' => "https://api.vmall.com/rest.php",
+	// 'LoginURL_huawei' => "https://api.vmall.com/rest.php",
+	'LoginURL_huawei' => "https://gss-cn.game.hicloud.com/gameservice/api/gbClientApi",
 	'RechargeId_huawei' => 900086000042542312,
 
 

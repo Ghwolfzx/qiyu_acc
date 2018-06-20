@@ -143,6 +143,50 @@ class ChannelRequest extends Controller
     	return true;
         $huawei = config('ChannelParam.huawein');
 
+        $nickname = explode('|', $nickname);
+        $params = [
+        	'method' => 'external.hms.gs.checkPlayerSign',
+        	'appId' => $huawei['AppId_huawei'],
+        	'cpId' => $huawei['RechargeId_huawei'],
+        	'ts' => $nickname[0],
+        	'playerId' => $uin,
+        	'playerLevel' => $nickname[1],
+        	'playerSSign' => $sessionid,
+        ];
+        ksort($params);
+        $requestString = '';
+        foreach($params as $key=>$value){
+            $requestString = $requestString . $key . "=" . urlencode($value) . "&";
+        }
+        $requestString = rtrim($requestString, '&');
+        $filename = dirname(__FILE__)."/payPublicKey.pem";
+        $pubKey = file_get_contents($filename);
+
+        $cpsign = openssl_sign($requestString, $sessionid, $pubKey, OPENSSL_ALGO_SHA256);
+        $requestString .= '&cpSign=' . urlencode(base64_encode($cpsign));
+
+        $url = $huawei['LoginURL_huawei'];
+        try {
+            $response = Self::$client->request('POST', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+                'body' => $requestString,
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                dd($data);
+                if ($data['errorno'] == 0) {
+                    return [true, $data['data']['guid'], $data['data']['username']];
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+
         $filename = dirname(__FILE__)."/payPublicKey.pem";
         $tmp = $huawei['AppId_huawei'] . $nickname . $uin;
         $pubKey = file_get_contents($filename);
@@ -432,6 +476,36 @@ class ChannelRequest extends Controller
                 \Log::info('mz ====' . $response->getBody()->getContents());
                 if ($data['code'] == 200) {
                 	return true;
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function linnyou($uin, $sessionid, $nickname, $channeltag)
+    {
+        $linnyou = config('ChannelParam.linnyou');
+
+        $sign = md5($sessionid . $linnyou['signKey_linnyou']);
+
+        $bodys = 'data=' . $sessionid . '&sign=' . $sign;
+        $url = $linnyou['LoginURL_linnyou'];
+        try {
+            $response = Self::$client->request('POST', $url, [
+                'headers' => [
+                    'charset'      => 'utf-8',
+                    'Content-type' => "application/x-www-form-urlencoded",
+                ],
+                'body' => $bodys,
+            ]);
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('linnyou ====' . $response->getBody()->getContents());
+                if ($data['errno'] == 1000) {
+                	return [true, $data['data']['uid'], ''];
                 }
             }
             return false;
