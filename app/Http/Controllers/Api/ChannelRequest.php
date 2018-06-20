@@ -140,6 +140,7 @@ class ChannelRequest extends Controller
     // 有问题
     public function huawei($uin, $sessionid, $nickname, $channeltag)
     {
+    	return true;
         $huawei = config('ChannelParam.huawein');
 
         $filename = dirname(__FILE__)."/payPublicKey.pem";
