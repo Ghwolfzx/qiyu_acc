@@ -128,7 +128,7 @@ class UserChannelLogin extends Controller
             // session 无法使用，改为 cache 存储
             cache(['user_session_' . $sessionid => $sessionid], config('cache.session_expires'));
             cache(['uid' . $sessionid => $user->id], config('cache.session_expires'));
-            cache(['channel_' . $sessionid => $channelname], config('cache.session_expires'));
+            cache(['channel_' . $sessionid => $channelname_fix], config('cache.session_expires'));
             cache(['channel_fix' . $sessionid => $channelname_fix], config('cache.session_expires'));
 
             $data = [];
@@ -137,6 +137,7 @@ class UserChannelLogin extends Controller
             $data['session'] = $sessionid;
             $data['first'] = false;
             $data['defaultTag'] = 'hot';
+            $data['guid'] = $uin;
 
             // 服务器数据
             $serverlist = GameServer::serverList();
