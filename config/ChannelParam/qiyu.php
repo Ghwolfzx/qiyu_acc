@@ -78,6 +78,17 @@ return [
                 "appkey" => "a1cac641084f3bcd85d77fbfc375cbe5",
                 "paykey" => "8e5cabc49869262187133c6424b558fa",
         ],
+        "qiyuiosSYMX" => [
+                "appid" => "100331",
+                "appkey" => "0c17fa5844071da4df84747f8a08bff2",
+                "paykey" => "8483979ca6ef9775df0d1f26e9109943",
+        ],
+        "qiyuDXQLB" => [
+                "appid" => "100320",
+                "appkey" => "720d3a5ce61671dd363e28d5995ed424",
+                "paykey" => "02edd66bc57beee50ede6b5f3f5b71db",
+        ],
+
     ],
 
     'ip_set' => ['106.14.250.138'],
