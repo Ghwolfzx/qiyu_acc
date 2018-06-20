@@ -415,7 +415,7 @@ class ChannelRequest extends Controller
         $ts = time();
         $sign = md5(sprintf("app_id=%s&session_id=%s&ts=%s&uid=%s:%s", $mz['AppID_mz'], $sessionid, $ts, $uin, $mz['AppSecret_mz']));
 
-        $bodys = urlencode('app_id=' . $mz['AppID_mz'] . '&session_id=' . $sessionid . '&uid=' . $uin . '&ts=' . $ts . '&sign_type=' . "md5" . '&sign=' . $sign);
+        $bodys = ('app_id=' . $mz['AppID_mz'] . '&session_id=' . $sessionid . '&uid=' . $uin . '&ts=' . $ts . '&sign_type=' . "md5" . '&sign=' . $sign);
         $url = $mz['LoginURL_mz'];
         try {
             $response = Self::$client->request('POST', $url, [
