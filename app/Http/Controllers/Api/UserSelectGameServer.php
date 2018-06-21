@@ -131,6 +131,7 @@ class UserSelectGameServer extends Controller
 
             $result = false;
             if (!$result) {
+                \Log::info('webaccount/selectgame url ===: ' . 'http://' . $serverGm->ip . ':' . $serverGm->gmport . '/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel . '&sta=' . $verifiedData->sta . '&total_time=' . $verifiedData->total_time . '&latestlogin=' . $verifiedData->latestlogin . '&latestoffline=' . $verifiedData->latestoffline . '&stareward=' . $verifiedData->stareward);
                 \Log::info('webaccount/selectgame result ===: ' . $res->getBody()->getContents());
                 return $this->responseResult('false', '服务器繁忙，请稍后重试。', ['errorcode' => 3]);
             }
@@ -144,6 +145,7 @@ class UserSelectGameServer extends Controller
 
             }
             if (!isset($result['session'])) {
+                \Log::info('webaccount/selectgame url ===: ' . 'http://' . $serverGm->ip . ':' . $serverGm->gmport . '/webaccount/selectgame?uid=' . $uid . '&session=' . $session . '&server=' . $serverid .'&channel=' . $channel . '&sta=' . $verifiedData->sta . '&total_time=' . $verifiedData->total_time . '&latestlogin=' . $verifiedData->latestlogin . '&latestoffline=' . $verifiedData->latestoffline . '&stareward=' . $verifiedData->stareward);
                 \Log::info('webaccount/selectgame result ===: ' . $res->getBody()->getContents());
                 return $this->responseResult('false', '服务器繁忙，请稍后重试。。。', ['errorcode' => 3]);
             }
