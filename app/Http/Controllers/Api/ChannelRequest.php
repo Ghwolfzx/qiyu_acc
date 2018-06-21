@@ -7,40 +7,28 @@ use Illuminate\Http\Request;
 
 class ChannelRequest extends Controller
 {
-    public function qiyu($uin, $sessionid, $nickname, $channeltag)
+    public function tanwan($uin, $sessionid, $nickname, $channeltag)
     {
-    	$qiyu = config('ChannelParam.qiyu');
+    	$tanwan = config('ChannelParam.tanwan.params.' . $channeltag);
 
-    	$qiyu_appid = $qiyu['params'][$channeltag]['appid'];
-        $qiyu_appkey = $qiyu['params'][$channeltag]['appkey'];
 
-        $qiyu_uid = $uin;
-        $qiyu_token = $sessionid;
-        $tmp = explode(';', $nickname);
-        $qiyu_time = $tmp[0];
-        $qiyu_sessid = $tmp[1];
+        $sign = md5($tanwan['appid'] . $uin . $sessionid . $tanwan['loginkey']);
+        $client = new Client();
 
-        $tmp = $qiyu_appid . $qiyu_uid . $qiyu_token . $qiyu_sessid . $qiyu_time . $qiyu_appkey;
-        $sign = md5($tmp);
+        $url = config('ChannelParam.tanwan.LoginURL') . '?appid=' . $tanwan['appid'] . '&uid=' . $uin . '&state=' . $sessionid . '&flag=' . $sign;
+        try {
+            $response = $client->request('GET', $url);
 
-        $client = new Client([
-            'headers' => [
-		        'Content-type' => 'application/json',
-		        'charset'      => 'utf-8',
-		        'Connection'   => 'close',
-		    ]
-        ]);
-        $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
-
-        $url = $qiyu['LoginURL'] . $bodys;
-        $response = $client->get($url);
-
-        if ($response->getStatusCode() == 200) {
-        	$data = $response->getBody()->getContents();
-        	if ($data == 'success') {
-        		return true;
-        	}
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('tanwan ====' . $response->getBody()->getContents());
+                if ($data['code'] == 1) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            return false;
         }
-        return false;
     }
 }
