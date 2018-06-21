@@ -131,7 +131,7 @@ class UserSelectGameServer extends Controller
 
             $result = false;
             if (!$result) {
-                return $this->responseResult('false', '选服失败，请联系客服', ['errorcode' => 1]);
+                return $this->responseResult('false', '服务器繁忙，请稍后重试。', ['errorcode' => 3]);
             }
         }
 
@@ -142,7 +142,7 @@ class UserSelectGameServer extends Controller
                 $result = json_decode($res->getBody()->getContents(), true);
             }
             if (!isset($result['session'])) {
-                return $this->responseResult('false', '选择区服失败，请联系客服', ['errorcode' => 1]);
+                return $this->responseResult('false', '服务器繁忙，请稍后重试。。。', ['errorcode' => 3]);
             }
         }
 
