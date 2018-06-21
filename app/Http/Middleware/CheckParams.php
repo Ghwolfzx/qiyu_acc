@@ -29,7 +29,7 @@ class CheckParams
             Log::info(LARAVEL_START . ' sign === ' . $sign);
             Log::info(LARAVEL_START . ' md5 === ' . $md5);
             Log::info(LARAVEL_START . ' [end time] ===' . microtime(true));
-            return response(['success' => 'false', 'msg' => '登录超时，请稍等。。。', 'result' => ['errorcode' => 2]]);
+            // return response(['success' => 'false', 'msg' => '登录超时，请稍等。。。', 'result' => ['errorcode' => 2]]);
         }
         $response = $next($request);
 
