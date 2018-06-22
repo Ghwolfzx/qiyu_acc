@@ -121,6 +121,7 @@ class UserChannelLogin extends Controller
         	}
             if ($channelname == '_360') {
                 $channelname_fix = '360';
+                \Log::info('360 ====' . $uin . '@' . $channelname_fix);
             }
 
             // 账号查询
