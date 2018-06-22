@@ -118,6 +118,9 @@ class UserChannelLogin extends Controller
         	$channelname_fix = $channelname;
         	if (array_key_exists($channelname, $loginChannelHandle)) {
         		$channelname_fix = $loginChannelHandle[$channelname];
+                if ($channelname == '_360') {
+                    $channelname_fix = '360';
+                }
         	}
 
             // 账号查询
