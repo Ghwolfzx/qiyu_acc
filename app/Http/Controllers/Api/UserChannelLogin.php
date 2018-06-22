@@ -119,8 +119,8 @@ class UserChannelLogin extends Controller
         	if (array_key_exists($channelname, $loginChannelHandle)) {
         		$channelname_fix = $loginChannelHandle[$channelname];
         	}
-            if ($channelname == '_360') {
-                $channelname_fix = '360';
+            if ($channelname == '360') {
+                $channelname_fix = $channelname;
                 \Log::info('370 ====' . $uin . '@' . $channelname_fix);
             }
 
