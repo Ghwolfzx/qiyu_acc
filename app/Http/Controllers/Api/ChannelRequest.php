@@ -546,6 +546,7 @@ class ChannelRequest extends Controller
 
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody()->getContents(), true);
+                \Log::info('360 ====' . $response->getBody()->getContents());
                 return [true, $data["id"], $data["name"]];
             }
             return false;
