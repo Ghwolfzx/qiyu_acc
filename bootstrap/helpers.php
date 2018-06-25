@@ -26,7 +26,7 @@ function encrypt_md5($param="", $key='')
  */
 function checkWhite()
 {
-    $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['REMOTE_ADDR'] : $_SERVER['REMOTE_ADDR'] ;
+    $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'] ;
     return in_array($ip, config('whiteList.ip_list'));
 }
 
