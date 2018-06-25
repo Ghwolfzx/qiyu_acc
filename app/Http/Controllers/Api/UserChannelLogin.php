@@ -32,7 +32,7 @@ class UserChannelLogin extends Controller
     	}
 
         // 渠道参数，需优化
-    	$loginChannelHandle = config('ChannelParam.tanwan.params');
+    	$loginChannelHandle = config('ChannelParam.xipu.params');
 
     	$uin = $request->uin; #相当于account
 	    $sessionid = $request->sessionid;
@@ -55,7 +55,7 @@ class UserChannelLogin extends Controller
 
         // 渠道用户校验, 奇遇暂时不校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
-            $result2 = app(ChannelRequest::class)->tanwan($uin, $sessionid, $nickname, $channelname);
+            $result2 = app(ChannelRequest::class)->xipu($uin, $sessionid, $nickname, $channelname);
 	    }
 
         if ($result2) {
@@ -69,7 +69,7 @@ class UserChannelLogin extends Controller
             // 渠道标识后缀
         	$channelname_fix = $channelname;
         	if (array_key_exists($channelname, $loginChannelHandle)) {
-        		$channelname_fix = 'tanwan';
+        		$channelname_fix = 'xipu';
         	}
 
             // 账号查询
