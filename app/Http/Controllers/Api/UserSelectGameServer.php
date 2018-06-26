@@ -66,7 +66,7 @@ class UserSelectGameServer extends Controller
                     return $onlineRet;
                 });
 
-                if (isset($onlineRet['online']) && $onlineRet['online'] >= 1000) {
+                if (isset($onlineRet['online']) && $onlineRet['online'] >= 1200) {
                     return $this->responseResult('false', '服务器爆满', ['errorcode' => 3]);
                 }
             }
