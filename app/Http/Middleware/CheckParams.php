@@ -19,7 +19,7 @@ class CheckParams
         $params = $request->all();
         Log::info(LARAVEL_START . ' [start time] ===' . LARAVEL_START);
         Log::info(LARAVEL_START . ' [url] ==='. url()->full());
-        Log::info(LARAVEL_START . ' [ip] ==='. $request->getClientIp());
+        Log::info(LARAVEL_START . ' [ip] ==='. getIp());
         $sign = $params['sign'] ?? '';
         unset($params['sign']);
         $md5 = encrypt_md5($params);
