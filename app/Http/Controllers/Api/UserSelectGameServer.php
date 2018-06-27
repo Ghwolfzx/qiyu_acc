@@ -52,7 +52,7 @@ class UserSelectGameServer extends Controller
                 }
 
                 if (!in_array($serverid, $serverList)) {
-                    return $this->responseResult('false', '服务器爆满.', ['errorcode' => 5]);
+                    return $this->responseResult('false', '当前区爆满，请前往最新区服。', ['errorcode' => 5]);
                 }
             }
 
