@@ -94,6 +94,11 @@ return [
                 "paykey" => "6c3c82864206cad56d2f525a2fd47035",
         ],
 
+        "qiyuiosMYCS" => [
+                "appid" => "100338",
+                "appkey" => "608a25c091c9dbafed16d5524003516b",
+                "paykey" => "1da123b15331b505d72a79a1a8760c50",
+        ],
     ],
 
     'ip_set' => ['106.14.250.138'],
