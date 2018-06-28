@@ -17,7 +17,7 @@ class CheckController extends Controller
     	$deviceid 	= $request->deviceid;
     	$version 	= $request->version;
     	\Log::info('check_params ==== ' . json_encode($request->all()));
-        if ($channel == 'linyouAndroid3')
+        if ($channel == 'linyouAndroid32010')
         {
             return Self::responseResult('false', '禁止进入');
         }
