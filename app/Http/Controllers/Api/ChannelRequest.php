@@ -7,20 +7,18 @@ use Illuminate\Http\Request;
 
 class ChannelRequest extends Controller
 {
-    public function qiyu($uin, $sessionid, $nickname, $channeltag)
+    public function shenyou($uin, $sessionid, $nickname, $channeltag)
     {
-    	$qiyu = config('ChannelParam.qiyu');
+    	$sytx = config('ChannelParam.sytx');
 
-    	$qiyu_appid = $qiyu['params'][$channeltag]['appid'];
-        $qiyu_appkey = $qiyu['params'][$channeltag]['appkey'];
+    	$sytx_appid = $sytx['params'][$channeltag]['appid'];
+        $sytx_appkey = $sytx['params'][$channeltag]['appkey'];
 
-        $qiyu_uid = $uin;
-        $qiyu_token = $sessionid;
         $tmp = explode(';', $nickname);
-        $qiyu_time = $tmp[0];
-        $qiyu_sessid = $tmp[1];
+        $time = $tmp[0];
+        $token = $tmp[1];
 
-        $tmp = $qiyu_appid . $qiyu_uid . $qiyu_token . $qiyu_sessid . $qiyu_time . $qiyu_appkey;
+        $tmp = $sytx_appid . $uin . $token . $sessionid . $time . $sytx_appkey;
         $sign = md5($tmp);
 
         $client = new Client([
@@ -30,9 +28,9 @@ class ChannelRequest extends Controller
 		        'Connection'   => 'close',
 		    ]
         ]);
-        $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
+        $bodys = "?appid=" . $sytx_appid . "&uid=" . $uin . "&token=" . $token . "&time=" . $time . "&sessid=" . $sessionid . "&sign=" . $sign;
 
-        $url = $qiyu['LoginURL'] . $bodys;
+        $url = $sytx['LoginURL'] . $bodys;
         $response = $client->get($url);
 
         if ($response->getStatusCode() == 200) {
