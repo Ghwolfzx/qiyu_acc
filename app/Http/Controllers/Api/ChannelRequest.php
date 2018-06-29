@@ -16,9 +16,10 @@ class ChannelRequest extends Controller
 
         $tmp = explode(';', $nickname);
         $time = $tmp[0];
-        $token = $tmp[1];
+        $ssid = $tmp[1];
+        $token = $sessionid;
 
-        $tmp = $sytx_appid . $uin . $sessionid . $token . $time . $sytx_appkey;
+        $tmp = $sytx_appid . $uin . $token . $ssid . $time . $sytx_appkey;
         $sign = md5($tmp);
 
         $client = new Client([
@@ -28,7 +29,7 @@ class ChannelRequest extends Controller
 		        'Connection'   => 'close',
 		    ]
         ]);
-        $bodys = "?appid=" . $sytx_appid . "&uid=" . $uin . "&token=" . $token . "&time=" . $time . "&sessid=" . $sessionid . "&sign=" . $sign;
+        $bodys = "?appid=" . $sytx_appid . "&uid=" . $uin . "&token=" . $token . "&time=" . $time . "&sessid=" . $ssid . "&sign=" . $sign;
 
         $url = $sytx['LoginURL'] . $bodys;
         $response = $client->get($url);
