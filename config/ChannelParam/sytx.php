@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "LoginURL" => "http://api.sdk.shenyoutx.com/Api/Member/CheckLogin",
+    "LoginURL" => "http://api.shenyoutx.com/Api/Member/CheckLogin",
     "params" => [
         "sytxABWZX" => [
             "appid" => "100001",
