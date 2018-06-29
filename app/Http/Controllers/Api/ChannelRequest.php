@@ -18,7 +18,7 @@ class ChannelRequest extends Controller
         $time = $tmp[0];
         $token = $tmp[1];
 
-        $tmp = $sytx_appid . $uin . $token . $sessionid . $time . $sytx_appkey;
+        $tmp = $sytx_appid . $uin . $sessionid . $token . $time . $sytx_appkey;
         $sign = md5($tmp);
 
         $client = new Client([
