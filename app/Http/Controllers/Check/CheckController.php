@@ -17,9 +17,9 @@ class CheckController extends Controller
     	$deviceid 	= $request->deviceid;
     	$version 	= $request->version;
     	\Log::info('check_params ==== ' . json_encode($request->all()));
-        if ($channel == 'linyouAndroid32010')
+        if ($channel == 'sytxABWZX3010' && ($package != 'com.my.sytx.bwzx' || $appname != '霸王之心'))
         {
-            // return Self::responseResult('false', '禁止进入');
+            return Self::responseResult('false', '禁止进入');
         }
     	// if ($package && $deviceid && $version) {
 			DB::table('zyj_valid')->insert(['channel' => $channel, 'packagesign' => $packagesign, 'package' => $package, 'appname' => $appname, 'deviceid' => $deviceid, 'version' => $version]);
