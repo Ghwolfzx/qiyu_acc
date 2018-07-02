@@ -21,7 +21,7 @@ class CheckController extends Controller
 
             ($package != 'com.my.sytx.bwzx' ||
 
-            ($appname != '霸王之心' && $appname != '作妖记')
+            ($appname != '霸王之心' && $appname != '作妖记' && $appname != '嘻游记')
 
             ))
         {
