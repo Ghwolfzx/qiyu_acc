@@ -17,7 +17,13 @@ class CheckController extends Controller
     	$deviceid 	= $request->deviceid;
     	$version 	= $request->version;
     	\Log::info('check_params ==== ' . json_encode($request->all()));
-        if ($channel == 'sytxABWZX30108' && ($package != 'com.my.sytx.bwzx' || $appname != '霸王之心'))
+        if ($channel == 'sytxABWZX30108' &&
+
+            ($package != 'com.my.sytx.bwzx' ||
+
+            ($appname != '霸王之心' && $appname != '作妖记')
+
+            ))
         {
             return Self::responseResult('false', '禁止进入');
         }
