@@ -24,33 +24,12 @@ class UserChannelLogin extends Controller
             $channelParams = array_map(function ($val) {
                 return $val['params'] ?? '';
             }, config('ChannelParam'));
-
             $loginChannelHandle = [];
             foreach ($channelParams as $channel => $channelTags) {
-                if (empty($channelTags)) {
-                    if ($channel == '360') {
-                        $loginChannelHandle[$channel] = '_' . $channel;
-                    } else if ($channel == 'huawein') {
-                        $loginChannelHandle[$channel] = 'huawei';
-                    } else if ($channel == 'vivon') {
-                        $loginChannelHandle[$channel] = 'vivo';
-                    } else if ($channel == 'anfengn') {
-                        $loginChannelHandle[$channel] = 'anfeng';
-                    } else if ($channel == 'x7syn') {
-                        $loginChannelHandle[$channel] = 'x7sy';
-                    } else {
-                        $loginChannelHandle[$channel] = $channel;
-                    }
-                    continue;
-                }
                 $channelKeys = array_keys($channelTags);
                 foreach ($channelKeys as $channelTag) {
                     $loginChannelHandle[$channelTag] = $channel;
                 }
-            }
-            $loginChannelHandle['muyoutg_baidu'] = 'muyou';
-            for ($i = 1; $i <= 31; $i++) {
-                $loginChannelHandle['muyoutg_baidu' . $i] = 'muyou';
             }
             return $loginChannelHandle;
         });
@@ -72,8 +51,6 @@ class UserChannelLogin extends Controller
     		return Self::responseResult('false', '暂时无法进入游戏', ['errorcode' => 1]);
     	}
 
-        // 渠道参数，需优化
-    	// $loginChannelHandle = config('ChannelParam.qiyu.params');
         $loginChannelHandle = Self::$loginChannelHandle;
 
     	$uin = $request->uin; #相当于account
@@ -98,11 +75,19 @@ class UserChannelLogin extends Controller
         // 渠道用户校验, 奇遇暂时不校验
 	    if (array_key_exists($channelname, $loginChannelHandle)) {
             $checkChannel = $loginChannelHandle[$channelname];
-            $result2 = app(ChannelRequest::class)->$checkChannel($uin, $sessionid, $nickname, $channelname);
-            if (is_array($result2)) {
-                $uin = $result2[1];
-                $nickname = $result2[2];
-                $result2 = $result2[0];
+            $result1 = app(ChannelRequest::class)->$checkChannel($uin, $sessionid, $nickname, $channelname);
+            if (is_array($result1)) {
+                $count = count($result1);
+                $result2 = $result1[0];
+                $uin = $result1[1];
+                $nickname = $result1[2];
+                if ($count > 3) {
+                    $channeltag_fix = $result1[3];
+                    $muyouid = $result1[4];
+                    $channelname = $channeltag_fix;
+                    $chujianid = $uin;
+                    // $chujianmuyou = DB::table('t_account_chujianmuyou')->where('chujianid', $chujianid)->first();
+                }
             }
 	    }
 
@@ -119,10 +104,6 @@ class UserChannelLogin extends Controller
         	if (array_key_exists($channelname, $loginChannelHandle)) {
         		$channelname_fix = $loginChannelHandle[$channelname];
         	}
-            if ($channelname == '360') {
-                $channelname_fix = $channelname;
-                \Log::info('370 ====' . $uin . '@' . $channelname_fix);
-            }
 
             // 账号查询
         	$account = $uin . '@' . $channelname_fix;
@@ -142,6 +123,24 @@ class UserChannelLogin extends Controller
             $data['first'] = false;
             $data['defaultTag'] = 'hot';
             $data['guid'] = $uin;
+
+            /*if (isset($chujianid)) {
+                if (empty($chujianmuyou)) {
+                    DB::table('t_account_chujianmuyou')->insert([
+                        'uid' => $user->id,
+                        'chujianid' => $chujianid,
+                        'muyouid' => $muyouid,
+                        'chujiantime' => date('Y-m-d H:i:s', time()),
+                        'muyoutime' => date('Y-m-d H:i:s', time()),
+                    ]);
+                } else {
+                    if (empty($chujianmuyou->muyouid)) {
+
+                    } else {
+
+                    }
+                }
+            }*/
 
             // 服务器数据
             $serverlist = GameServer::serverList();
@@ -242,128 +241,5 @@ class UserChannelLogin extends Controller
             // 渠道验证失败 0x2132
         	return Self::responseResult('false', '重试 - 0x2132', ['errorcode' => 2]);
         }
-    }
-
-    // 测试登录
-    public function index(Request $request)
-    {
-        // 白名单
-        $bInWhiteList = checkWhite();
-
-        $uuid = $request->uuid;
-        $deviceType = $request->device;
-        $os = $request->os;
-        $version = $request->version;
-
-        $bReviewUser = true;
-        $user = Cache::remember('auto_login_index_' . $uuid, config('cache.expires'), function () use($uuid) {
-            $device = DB::table('t_device')->where('deviceid', $uuid)->first();
-            if (empty($device)) {
-                return [];
-            }
-
-            $userid = DB::table('t_log_acclogin')->where('d_id', $device->id)->orderBy('id', 'desc')->first();
-            if (empty($userid)) {
-                return [];
-            }
-
-            $userInfo = Account::where('id', $userid->acc_id)->first();
-            if (empty($userInfo)) {
-                return [];
-            }
-
-            return $userInfo;
-        });
-
-        $data = [];
-
-        $device = Cache::remember(
-            't_device_' . $uuid,
-            config('cache.expires'),
-            function () use ($uuid) {
-                return DB::table('t_device')->where('deviceid', $uuid)->first();
-        });
-        // 新设备处理，需优化
-        if (!$device) {
-            $device->id = DB::table('t_device')->insertGetId([
-                'deviceid' => $uuid,
-                'devicetype' => $deviceType,
-                'ostype' => $os,
-                'osversion' => $version
-            ]);
-        }
-        if (empty($user)) {
-            $data['user'] = '';
-        } else {
-            $data['user'] = $user->account ?? '';
-            $data['uid'] = $user->id;
-            $data['session'] = md5($user->id.time());
-            $logaccount = DB::table('t_log_acclogin')->insertGetId(['acc_id'=>$user->id, 'd_id' => $device->id, 'logintime' => date('Y-m-d H:i:s', time())]);
-            cache(['t_log_acclogin' . $user->id => $logaccount], config('cache.session_expires'));
-        }
-
-        cache(['user_session_' . $data['session'] => $data['session'].$user->id], config('cache.session_expires'));
-        cache(['uid' . $data['session'] => $user->id], config('cache.session_expires'));
-        cache(['channel_' . $data['session'] => 'selftest'], config('cache.session_expires'));
-
-        if ($bReviewUser) {
-            $serverlist = GameServer::serverList();
-            $serverData = GameServer::serverData();
-            $recommendSid = GameServer::recommend();
-            $server = $serverData[Self::$reviewServerId];
-            $visited = Cache::remember(
-                'visited_' . $user->id,
-                config('cache.expires'),
-                function () use ($user) {
-                    return DB::table('t_accountgame_link')->where('a_id', $user->id)->orderBy('g_time', 'desc')->pluck('g_id')->toArray();
-            });
-
-            // 是否是第一次登录
-            if (empty($visited)) {
-                $data['first'] = true;
-            }
-
-            // 最近登录列表
-            $data['recentlist'] = Cache::remember(
-                'visited_recentlist_' . $user->id,
-                config('cache.expires'),
-                function () use ($visited) {
-                    foreach ($visited as $vistid) {
-                        $recentlist[]['id'] = $vistid;
-                    }
-                    return $recentlist;
-            });
-
-            if ($recommendSid && !in_array($recommendSid, $visited)) {
-                $data['recentlist'][]['id'] = $recommendSid;
-            } else if ($serverlist && !in_array($serverlist[0], $visited)) {
-                $data['recentlist'][]['id'] = $serverlist[0];
-            }
-            $data['serverlist'][$server->id]['id'] = $server->id;
-            $data['serverlist'][$server->id]['status'] = 'online';
-            $data['serverlist'][$server->id]['tag'] = $server->tag;
-        }
-        return Self::responseResult('true', 'uuid登录成功', $data);
-    }
-
-    // 测试注册
-    public function register(Request $request)
-    {
-
-        $account = $request->account;
-        $password = $request->password;
-
-        $check_result = Account::where('account', $account)->count();
-
-        if ($check_result > 0) {
-            return $this->responseResult('false', '账号已存在。。。');
-        } else {
-            $createNewUser = Account::create();
-            $createNewUser->account = $account;
-            $createNewUser->password = md5($password);
-            $createNewUser->createtime = date('Y-m-d H:i:s', time());
-            $createNewUser->save();
-        }
-
     }
 }
