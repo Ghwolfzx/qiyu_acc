@@ -7,40 +7,20 @@ use Illuminate\Http\Request;
 
 class ChannelRequest extends Controller
 {
-    public function qiyu($uin, $sessionid, $nickname, $channeltag)
+    public function _9377($uin, $sessionid, $nickname, $channeltag)
     {
-    	$qiyu = config('ChannelParam.qiyu');
+    	$_9377 = config('ChannelParam.9377.params.' . $channeltag);
 
-    	$qiyu_appid = $qiyu['params'][$channeltag]['appid'];
-        $qiyu_appkey = $qiyu['params'][$channeltag]['appkey'];
+        $tmp = explode('#', $nickname);
+        $token = $tmp[0];
+        $time = $tmp[1];
 
-        $qiyu_uid = $uin;
-        $qiyu_token = $sessionid;
-        $tmp = explode(';', $nickname);
-        $qiyu_time = $tmp[0];
-        $qiyu_sessid = $tmp[1];
-
-        $tmp = $qiyu_appid . $qiyu_uid . $qiyu_token . $qiyu_sessid . $qiyu_time . $qiyu_appkey;
+        $tmp = $sessionid . $time . $_9377['appkey'];
         $sign = md5($tmp);
 
-        $client = new Client([
-            'headers' => [
-		        'Content-type' => 'application/json',
-		        'charset'      => 'utf-8',
-		        'Connection'   => 'close',
-		    ]
-        ]);
-        $bodys = "?appid=" . $qiyu_appid . "&uid=" . $qiyu_uid . "&token=" . $qiyu_token . "&time=" . $qiyu_time . "&sessid=" . $qiyu_sessid . "&sign=" . $sign;
-
-        $url = $qiyu['LoginURL'] . $bodys;
-        $response = $client->get($url);
-
-        if ($response->getStatusCode() == 200) {
-        	$data = $response->getBody()->getContents();
-        	if ($data == 'success') {
-        		return true;
-        	}
-        }
+    	if ($sign == $token) {
+    		return true;
+    	}
         return false;
     }
 }
